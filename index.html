@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Ghoulish Gala! | Alina's 11th Birthday!</title> <!-- Restored Title -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Eater&family=Mystery+Quest&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0d051c; /* Kept the dark base for contrast */
+            color: #fff;
+            overflow: hidden;
+            font-family: 'Mystery Quest', cursive;
+        }
+        .screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; text-align: center; padding: 1rem;
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            z-index: 10; /* Ensure screens layer correctly */
+             overflow-y: auto; /* Allow scrolling on small screens if needed */
+        }
+        .screen.hidden { opacity: 0; transform: translateY(100%); pointer-events: none; z-index: 1; }
+        
+        /* --- Animated Background Elements --- */
+        .floating-ghost, .flying-bat {
+            position: absolute;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 5; /* Below screens, above body */
+        }
+        .floating-ghost { animation: float 10s ease-in-out infinite; }
+        .flying-bat { animation: fly 8s linear infinite; }
+        @keyframes float { 50% { transform: translateY(-20px); } }
+        @keyframes fly { 50% { transform: translate(15px, -15px) scale(1.1); } }
+
+        /* --- SCREEN 1: GRAND TITLE --- */
+        /* Updated background */
+        #grand-title-screen { background: url("https://i.ibb.co/5hTY8vVT/halloween-background-yqfav572bob9eeka.jpg") no-repeat center center; background-size: cover; } 
+        .main-title { 
+            font-family: 'Eater', cursive; 
+            font-size: clamp(1.1rem, 4vw, 2rem); 
+            /* CHANGE: Updated gradient to orange/yellow */
+            background: linear-gradient(45deg, #ff8c00, #ffde59); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            line-height: 1.1; 
+            /* CHANGE: Updated drop shadow to orange/yellow */
+            filter: drop-shadow(0 0 5px #ff8c00) drop-shadow(0 0 10px #ffde59);
+        }
+        .sub-title { /* Kept birthday subtitle */
+            font-family: 'Creepster', cursive;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            /* CHANGE: Brighter text color */
+            color: #ffde59; 
+            /* CHANGE: Adjusted text shadow for contrast */
+            text-shadow: 0 0 8px #ff8c00, 0 2px 4px rgba(0,0,0,0.5); 
+            margin-top: 1rem;
+        }
+        
+        .fun-button {
+            font-family: 'Creepster', cursive;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(45deg, #ff4e00, #ff8c00); /* NEON ORANGE */
+            color: #fff;
+            border-radius: 50px; cursor: pointer; border: 2px solid #ff8c00;
+            box-shadow: 0 0 10px #ff4e00, inset 0 0 5px #ff8c00; /* NEON GLOW */
+            margin-top: 1rem; /* Reduced margin slightly to fit more buttons potentially */
+            text-shadow: 0 0 5px #000;
+            transition: all 0.3s ease;
+             display: inline-block; /* Ensure buttons align well */
+             min-width: 180px; /* Ensure buttons have minimum width */
+        }
+        .fun-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 0 10px #ff4e00, inset 0 0 5px #ff8c00; 
+        }
+        
+        @media (min-width: 640px) {
+            .fun-button {
+                font-size: 1.5rem;
+                padding: 1rem 2.5rem;
+                 margin-top: 2rem;
+                 min-width: 220px;
+            }
+        }
+        .fun-button:hover:not(:disabled) { 
+            transform: scale(1.1) rotate(-5deg); 
+            box-shadow: 0 0 15px #ff4e00, 0 0 5px #ff8c00, inset 0 0 5px #ff8c00; 
+        }
+        
+        /* --- SCREEN 2: QUOTE & RIDDLE PROMPT --- */
+        #warning-screen { background: url('https://i.ibb.co/7xyGvPSx/avatars-8.jpg') no-repeat center center; background-size: cover; }
+        .quote-text {
+            font-family: 'Mystery Quest', cursive;
+            font-size: clamp(1.25rem, 5vw, 2.5rem);
+            color: #f0f0f0;
+            text-shadow: 0 0 8px #f000ff; /* NEON PURPLE/PINK */
+            max-width: 600px;
+            margin-top: 1.5rem;
+        }
+        .quote-loading-text {
+            font-family: 'Mystery Quest', cursive;
+            font-size: 1.5rem;
+            color: #f0f0f0;
+            text-shadow: 0 0 8px #f000ff;
+        }
+
+        /* --- SCREEN 3: AVATAR & RIDDLE INPUT --- */
+        .gatekeeper-card {
+            background: #1a0c2e; /* Dark purple base */
+            border: 4px solid #00f6ff; /* NEON CYAN */
+            box-shadow: 0 0 15px #00f6ff; /* Bright NEON CYAN glow */
+            border-radius: 20px; 
+            padding: 1.5rem; 
+            width: calc(100% - 2rem);
+            max-width: 500px;
+        }
+        @media (min-width: 640px) {
+            .gatekeeper-card {
+                padding: 2rem;
+            }
+        }
+
+        .riddle-prompt-text { 
+            font-family: 'Mystery Quest', cursive; 
+            color: #fff; 
+            font-size: 1.25rem;
+            text-shadow: 0 0 8px #00f6ff; /* Cyan text glow */
+        }
+        .riddle-text {
+             font-family: 'Mystery Quest', cursive; 
+            color: #ffde59; /* Bright yellow for riddle */
+            font-size: 1.25rem;
+            margin-top: 1rem;
+            text-shadow: 0 0 10px #ffde59;
+        }
+         @media (min-width: 640px) {
+            .riddle-text {
+                font-size: 1.5rem;
+            }
+        }
+        .fun-input {
+            font-family: 'Mystery Quest', cursive; 
+            font-size: 1rem;
+            background: #1a0c2e; border: 2px solid #00f6ff;
+            color: #00f6ff; text-align: center; border-radius: 10px;
+            padding: 0.5rem; transition: all 0.3s;
+            box-shadow: 0 0 5px #00f6ff; /* Added glow */
+        }
+        .fun-input:focus { 
+            box-shadow: 0 0 10px #00f6ff; 
+            outline: none; 
+        }
+        .avatar-image { 
+            width: 120px; height: 120px; 
+            margin: auto; object-fit: cover; 
+            border-radius: 50%; border: 4px solid #00f6ff; 
+            box-shadow: 0 0 10px #00f6ff; /* NEON CYAN glow */
+            transition: transform 0.3s; 
+        }
+        @media (min-width: 640px) {
+            .avatar-image {
+                width: 150px; height: 150px;
+            }
+        }
+        .avatar-image:hover { transform: scale(1.1); }
+        
+        /* Spinner for loading */
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid rgba(0, 246, 255, 0.3);
+            border-top-color: #00f6ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- SCREEN 4 (SUCCESS/FAIL) --- */
+        #success-screen, #consolation-screen { background: url('https://i.ibb.co/1JtxRp6k/81-Ctw-Oy-Tur-L-UF1000-1000-QL80.jpg') no-repeat center center; background-size: cover; }
+        .result-card {
+            background: rgba(13, 5, 28, 0.85);
+            border: 5px solid; border-image-slice: 1;
+            border-radius: 20px; 
+            padding: 1.5rem; 
+            width: calc(100% - 2rem);
+            max-width: 600px;
+        }
+        @media (min-width: 640px) {
+            .result-card {
+                padding: 2rem;
+            }
+        }
+
+        #success-screen .result-card { border-image-source: linear-gradient(45deg, #39ff14, #00f6ff); } /* Green/Cyan for success */
+        #consolation-screen .result-card { border-image-source: linear-gradient(45deg, #ff4e00, #ff0000); } /* Orange/Red for consolation */
+
+        .result-title { 
+            font-family: 'Eater', cursive; 
+            font-size: clamp(2rem, 6vw, 3rem); 
+            line-height: 1.1; 
+            margin-bottom: 1rem;
+        }
+        .result-title.success { color: #39ff14; }
+        .result-title.consolation { color: #ff8c00; }
+        
+        .result-card .text-lg {
+             font-size: clamp(1rem, 3vw, 1.125rem); /* Responsive for paragraphs */
+        }
+
+        .welcome-message { 
+            font-family: 'Mystery Quest', cursive;
+            font-weight:700; 
+            color: #fde047; /* NEON YELLOW */
+            font-size: clamp(1.25rem, 5vw, 1.5rem);
+            margin-bottom: 1rem;
+        }
+        
+        .birthday-message {
+            font-family: 'Eater', cursive;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            color: #f000ff;
+            text-shadow: 0 0 8px #f000ff;
+            margin-bottom: 1rem;
+        }
+
+        .final-details p {
+            font-family: 'Mystery Quest', cursive;
+            font-weight: 700; 
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            line-height: 1.4;
+        }
+        @media (min-width: 640px) {
+            .final-details p {
+                font-size: 1.1rem;
+            }
+        }
+        
+        .detail-title { 
+            font-family: 'Creepster', cursive; 
+            letter-spacing: 1px;
+            font-size: clamp(1.25rem, 5vw, 1.5rem);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        @media (min-width: 640px) {
+            .detail-title {
+                display: inline;
+                margin-bottom: 0;
+                margin-right: 0.5rem;
+            }
+        }
+        .gift-idea-box, .poem-box, .wish-box, .game-output { /* Grouped output boxes */
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        
+        /* --- NEW: SCREEN 5 (GUESSING GAME) --- */
+        #game-screen { background: linear-gradient(180deg, #2a0a40, #0d051c); }
+        .game-card {
+            background: #1a0c2e; /* Dark purple base */
+            border: 4px solid #ff4e00; /* NEON ORANGE */
+            box-shadow: 0 0 15px #ff4e00; /* ORANGE glow */
+            border-radius: 20px; 
+            padding: 1.5rem; 
+            width: calc(100% - 2rem);
+            max-width: 500px;
+        }
+        @media (min-width: 640px) {
+            .game-card {
+                padding: 2rem;
+            }
+        }
+        .game-title {
+            font-family: 'Eater', cursive; 
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            color: #ff8c00;
+            margin-bottom: 1rem;
+        }
+        .game-status {
+            font-family: 'Creepster', cursive;
+            font-size: 1.2rem;
+            color: #ffde59;
+             margin-bottom: 1rem;
+        }
+        .game-history {
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ff8c00;
+            border-radius: 5px;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .game-history p { margin-bottom: 0.25rem; }
+        .game-history .user-q { color: #00f6ff; }
+        .game-history .gemini-a { color: #ffde59; }
+        
+        .game-input {
+            font-family: 'Mystery Quest', cursive; 
+            font-size: 1rem;
+            background: #1a0c2e; border: 2px solid #ff8c00;
+            color: #ff8c00; text-align: center; border-radius: 10px;
+            padding: 0.5rem; transition: all 0.3s;
+            box-shadow: 0 0 5px #ff8c00; 
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        .game-input:focus { 
+            box-shadow: 0 0 10px #ff8c00; 
+            outline: none; 
+        }
+        .game-button { /* Reusing fun-button styles but adjusting colors */
+             font-family: 'Creepster', cursive;
+            font-size: 1.25rem; letter-spacing: 2px;
+            background: linear-gradient(45deg, #a855f7, #f000ff); /* Purple */
+            color: #fff; padding: 0.5rem 1rem;
+            border-radius: 50px; cursor: pointer; border: 2px solid #a855f7;
+            box-shadow: 0 0 10px #f000ff;
+            margin-top: 0.5rem;
+            text-shadow: 0 0 5px #000;
+            transition: all 0.3s ease;
+             width: 100%;
+        }
+         .game-button:disabled {
+            opacity: 0.5; cursor: not-allowed; transform: none !important;
+            box-shadow: 0 0 10px #f000ff;
+         }
+        .game-button:hover:not(:disabled) { 
+            transform: scale(1.05) rotate(-3deg); 
+            box-shadow: 0 0 15px #f000ff; 
+        }
+        .game-result {
+            font-family: 'Eater', cursive; 
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            margin-top: 1rem;
+        }
+        .game-result.win { color: #39ff14; }
+        .game-result.lose { color: #ff4e00; }
+        
+    </style>
+</head>
+<body>
+    <!-- Fun Animated Background Elements --><img src="https://i.ibb.co/jP7hf0KQ/hd-cartoon-halloween-ghost-scary-face-png-701751694865374drzx90dpmq-removebg-preview.png" class="floating-ghost" style="width: 80px; top: 10%; left: 5%;" alt="Ghost">
+    <img src="https://i.ibb.co/bTfdh0b/pngtree-bat-wings-clipart-white-background-with-a-cute-cartoon-bat-vector-png-image-6867852.png" style="width: 60px; top: 20%; right: 10%; animation-delay: -2s;" alt="Bat">
+    <img src="https://i.ibb.co/mCVqXJKb/pngtree-happy-bat-cartoon-png-image-16894267.png" class="flying-bat" style="width: 50px; top: 70%; left: 15%; animation-delay: -5s;" alt="Bat">
+    
+    <!-- Screen 1: Grand Title (RESTORED SPOOKY + BIRTHDAY) --><div id="grand-title-screen" class="screen">
+        <h1 class="main-title">A Monstrously Marvelous Ghoulish Gala</h1> <!-- Restored -->
+        <h2 class="sub-title">You're Summoned to Alina's 11th Birthday Bash!</h2> <!-- Kept -->
+        <button class="fun-button" onclick="showWarningScreen()">Enter if you Dare!</button>
+    </div>
+
+    <!-- Screen 2: The Ghoulish Quote & Riddle Dare --><div id="warning-screen" class="screen hidden">
+        <!-- ✨ New Gemini Feature: Dynamic Quote -->
+        <div id="quote-loading-box">
+            <div class="spinner mx-auto" style="border-top-color: #f000ff;"></div>
+            <p class="quote-loading-text mt-4">Summoning a spirit's words...</p>
+        </div>
+        <div id="quote-content-box" class="hidden">
+            <p id="quote-text-display" class="quote-text">"When witches go riding, and black cats are seen, the moon laughs and whispers, 'tis near Halloween!"</p>
+        </div>
+        <button class="fun-button" onclick="showRiddleScreen()">Solve The Riddle to prove you are worthy to be invited!</button>
+    </div>
+
+    <!-- Screen 3: The Avatar's Riddle & Input Fields --><div id="gatekeeper-screen" class="screen hidden">
+        <div class="gatekeeper-card">
+            <img id="avatar-image" class="avatar-image mb-4" src="https://i.ibb.co/QFHZnXDj/unnamed-2.jpg" alt="Alina's Spooky Avatar">
+            <div id="riddle-loading-box">
+                <div class="spinner mx-auto"></div>
+                <p class="riddle-prompt-text mb-2">Summoning a spirit...</p>
+            </div>
+            <div id="riddle-content-box" class="hidden">
+                <p id="riddle-prompt-text" class="riddle-prompt-text mb-2">A spirit appears and speaks:</p>
+                <p id="riddle-text" class="riddle-text mb-4">"I am a test..."</p>
+            </div>
+            <div class="space-y-4 mt-4">
+                <input id="guest-name" type="text" class="fun-input w-full" placeholder="What name shall I inscribe?">
+                <input id="riddle-answer" type="text" class="fun-input w-full" placeholder="Your cryptic answer, if you dare...">
+                <input id="guest-relation" type="text" class="fun-input w-full" placeholder="Your connection to the Birthday Spectre?">
+            </div>
+            <p id="error-message" class="text-red-400 text-sm mt-3 hidden"></p>
+            <button id="gatekeeper-button" class="fun-button mt-6" onclick="checkRiddleAndDetails()">Unveil Your Fate!</button>
+        </div>
+    </div>
+
+    <!-- Screen 4 - SUCCESS: You are truly worthy! --><div id="success-screen" class="screen hidden">
+        <div class="result-card">
+            <h2 id="success-guest-name" class="welcome-message mb-2"></h2>
+            <h1 class="result-title success">You are Truly Worthy!</h1>
+            <p class="text-lg text-gray-200 mb-4">Your wisdom has shone through the darkest of riddles!</p>
+            
+            <h3 class="birthday-message">Happy 11th Birthday, Alina!</h3>
+
+            <div class="final-details text-left space-y-3 mt-6 border-t-2 border-green-400 pt-4">
+                <p><span class="detail-title text-green-400">The Haunting Hour:</span> Friday, Oct 31st | 2:00 PM to 6:00 PM</p>
+                <p><span class="detail-title text-cyan-400">The Spooky Spot:</span> The Grand Haunted Manor (Our Home)</p>
+                <p><span class="detail-title text-yellow-400">Ghastly Garb:</span> Your Most Magical Costume! Brown, Grey, White</p> <!-- Restored -->
+            </div>
+            <p class="mt-4 text-yellow-300 font-bold">Prepare for birthday cake, spooky games, and fang-tastic treats!</p> <!-- Combined -->
+            
+            <!-- Gemini Buttons -->
+            <button id="gift-idea-btn-success" class="fun-button mt-4" style="background: linear-gradient(45deg, #00f6ff, #39ff14); border-color: #39ff14; box-shadow: none;" onclick="getGiftIdeas('success-gift-box')">✨ Get Gift Ideas ✨</button>
+            <button id="poem-btn-success" class="fun-button mt-4" style="background: linear-gradient(45deg, #a855f7, #f000ff); border-color: #a855f7; box-shadow: none;" onclick="getBirthdayPoem('success-poem-box')">✨ Create a Birthday Verse ✨</button>
+            <button id="wish-btn-success" class="fun-button mt-4" style="background: linear-gradient(45deg, #ff8c00, #fde047); border-color: #fde047; box-shadow: none;" onclick="getBirthdayWish('success-wish-box')">✨ Craft a Spooky Birthday Wish ✨</button>
+            <button id="game-btn-success" class="fun-button mt-4" style="background: linear-gradient(45deg, #ff4e00, #ff0000); border-color: #ff0000; box-shadow: none;" onclick="startGame('success')">👻 Play Guessing Game 👻</button> <!-- NEW GAME BUTTON -->
+            
+            <div id="success-gift-box" class="gift-idea-box hidden"></div>
+            <div id="success-poem-box" class="poem-box hidden"></div>
+            <div id="success-wish-box" class="wish-box hidden"></div>
+        </div>
+    </div>
+
+    <!-- Screen 4 - CONSOLATION: Not worthy, but still invited --><div id="consolation-screen" class="screen hidden">
+        <div class="result-card">
+            <h2 id="consolation-guest-name" class="welcome-message mb-2"></h2>
+            <h1 class="result-title consolation">The Riddle Remains a Mystery to You...</h1>
+            <p class="text-lg text-gray-200 mb-2">The correct answer was: <span id="correct-riddle-answer" class="font-bold text-yellow-400"></span></p>
+            <p class="text-lg text-gray-200 mb-4">But fear not! It's Alina's special day, and her spirit of generosity (and love for presents) compels us to still invite you to her:</p>
+            
+            <h3 class="birthday-message">Happy 11th Birthday, Alina!</h3>
+
+            <div class="final-details text-left space-y-3 mt-6 border-t-2 border-orange-400 pt-4">
+                <p><span class="detail-title text-green-400">The Haunting Hour:</span> Friday, Oct 31st | 2:00 PM to 6:00 PM</p>
+                <p><span class="detail-title text-cyan-400">The Spooky Spot:</span> The Grand Haunted Manor (Our Home)</p>
+                <p><span class="detail-title text-yellow-400">Ghastly Garb:</span> Your Most Magical Costume! Brown, Grey, White!</p> <!-- Restored -->
+            </div>
+            <p class="mt-4 text-orange-300 font-bold">Prepare for birthday cake, spooky games, and fang-tastic treats!</p> <!-- Combined -->
+
+            <!-- Gemini Buttons -->
+            <button id="gift-idea-btn-consolation" class="fun-button mt-4" style="background: linear-gradient(45deg, #00f6ff, #39ff14); border-color: #39ff14; box-shadow: none;" onclick="getGiftIdeas('consolation-gift-box')">✨ Get Gift Ideas ✨</button>
+            <button id="poem-btn-consolation" class="fun-button mt-4" style="background: linear-gradient(45deg, #a855f7, #f000ff); border-color: #a855f7; box-shadow: none;" onclick="getBirthdayPoem('consolation-poem-box')">✨ Create a Birthday Verse ✨</button>
+            <button id="wish-btn-consolation" class="fun-button mt-4" style="background: linear-gradient(45deg, #ff8c00, #fde047); border-color: #fde047; box-shadow: none;" onclick="getBirthdayWish('consolation-wish-box')">✨ Craft a Spooky Birthday Wish ✨</button>
+            <button id="game-btn-consolation" class="fun-button mt-4" style="background: linear-gradient(45deg, #ff4e00, #ff0000); border-color: #ff0000; box-shadow: none;" onclick="startGame('consolation')">👻 Play Guessing Game 👻</button> <!-- NEW GAME BUTTON -->
+
+            <div id="consolation-gift-box" class="gift-idea-box hidden"></div>
+            <div id="consolation-poem-box" class="poem-box hidden"></div>
+            <div id="consolation-wish-box" class="wish-box hidden"></div>
+        </div>
+    </div>
+    
+    <!-- ✨ NEW SCREEN 5: GUESSING GAME ✨ --><div id="game-screen" class="screen hidden">
+        <div class="game-card">
+            <h1 class="game-title">10 Questions Guessing Game</h1>
+            <p class="game-status">I'm thinking of something spooky or birthday related...</p>
+            <p id="questions-left" class="game-status">Questions Left: 10</p>
+            
+            <div id="game-history" class="game-history">
+                <p>Ask me Yes/No questions to guess what I am!</p>
+            </div>
+
+            <div id="game-active-area">
+                <input id="question-input" type="text" class="game-input" placeholder="Your Yes/No Question...">
+                <button id="ask-button" class="game-button" onclick="askQuestion()">Ask Question</button>
+                <input id="guess-input" type="text" class="game-input mt-4" placeholder="Or Make Your Final Guess...">
+                <button id="guess-button" class="game-button" onclick="makeGuess()">Make Final Guess</button>
+            </div>
+            
+            <div id="game-result-area" class="hidden">
+                 <p id="game-result-text" class="game-result"></p>
+                 <button class="fun-button mt-4" onclick="returnToInvitation()">Back to Invitation</button>
+            </div>
+             <button class="fun-button mt-4" onclick="returnToInvitation()">Quit Game</button> <!-- Allow quitting -->
+        </div>
+    </div>
+
+
+    <!-- FIX: Replaced all unreliable sound links with stable ones -->
+    <audio id="swoosh-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_73ed201763.mp3" preload="auto"></audio>
+    <audio id="correct-sound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_c3b04c7c6a.mp3" preload="auto"></audio>
+    <audio id="wrong-sound" src="https://cdn.pixabay.com/audio/2022/03/14/audio_90c10b7f6c.mp3" preload="auto"></audio>
+    <audio id="bg-music" src="https://cdn.pixabay.com/audio/2022/10/26/audio_a7a2a85a32.mp3" loop preload="auto"></audio>
+
+    <script>
+        // --- ✨ Gemini API Constants ---
+        const apiKey = ""; // If you want to use models other than gemini-2.5-flash-preview-09-2025 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // --- Screen Elements ---
+        const grandTitleScreen = document.getElementById('grand-title-screen');
+        const warningScreen = document.getElementById('warning-screen');
+        const gatekeeperScreen = document.getElementById('gatekeeper-screen');
+        const successScreen = document.getElementById('success-screen');
+        const consolationScreen = document.getElementById('consolation-screen');
+        const gameScreen = document.getElementById('game-screen'); // NEW
+
+        // --- ✨ New Quote Screen Elements ---
+        const quoteLoadingBox = document.getElementById('quote-loading-box');
+        const quoteContentBox = document.getElementById('quote-content-box');
+        const quoteTextDisplay = document.getElementById('quote-text-display');
+
+        // --- Riddle Screen Elements ---
+        const errorMessage = document.getElementById('error-message');
+        const avatarImage = document.getElementById('avatar-image');
+        const riddleLoadingBox = document.getElementById('riddle-loading-box');
+        const riddleContentBox = document.getElementById('riddle-content-box');
+        const riddleText = document.getElementById('riddle-text');
+        const guestNameInput = document.getElementById('guest-name');
+        const riddleAnswerInput = document.getElementById('riddle-answer');
+        const guestRelationInput = document.getElementById('guest-relation');
+        const gatekeeperButton = document.getElementById('gatekeeper-button');
+
+        // --- Final Screen Elements ---
+        const successGuestName = document.getElementById('success-guest-name');
+        const consolationGuestName = document.getElementById('consolation-guest-name');
+        const correctRiddleAnswerSpan = document.getElementById('correct-riddle-answer');
+        
+        // --- ✨ New Game Screen Elements ---
+        const questionsLeftDisplay = document.getElementById('questions-left');
+        const gameHistoryDisplay = document.getElementById('game-history');
+        const questionInput = document.getElementById('question-input');
+        const askButton = document.getElementById('ask-button');
+        const guessInput = document.getElementById('guess-input');
+        const guessButton = document.getElementById('guess-button');
+        const gameActiveArea = document.getElementById('game-active-area');
+        const gameResultArea = document.getElementById('game-result-area');
+        const gameResultText = document.getElementById('game-result-text');
+
+
+        // --- Audio Elements ---
+        const swooshSound = document.getElementById('swoosh-sound');
+        const correctSound = document.getElementById('correct-sound');
+        const wrongSound = document.getElementById('wrong-sound');
+        const bgMusic = document.getElementById('bg-music');
+        
+        // --- ✨ Avatar & Riddle Data (NOW WITH PERSONAS!) ---
+        const avatarProfiles = [
+             { persona: 'A glamorous skeleton who loves glitter and rock music.', src: 'https://i.ibb.co/tpTnfCpd/unnamed.jpg' },
+             { persona: 'A futuristic alien princess who is obsessed with Earth candy.', src: 'https://i.ibb.co/WWYqY29C/unnamed-3.jpg' },
+             { persona: 'A classic, bubbly witch who loves to brew potions that smell like bubblegum.', src: 'https://i.ibb.co/GvdNZy6B/unnamed-1.jpg' },
+             { persona: 'A slightly mad scientist who is very proud of her bubbling, glowing experiments.', src: 'https://i.ibb.co/R42GNSdx/avatars-7.jpg' },
+             { persona: 'A high-energy ghost cheerleader with a spectral pom-pom.', src: 'https://i.ibb.co/7tCTkSMq/unnamed-6.jpg' },
+             { persona: 'A cool werewolf rocker with a guitar made of bones.', src: 'https://i.ibb.co/d03MTvWv/unnamed-7.jpg' },
+             { persona: 'A second classic, bubbly witch who also loves to brew potions.', src: 'https://i.ibb.co/GvdNZy6B/unnamed-1.jpg' },
+             { persona: 'A very sleepy, moody vampire who is doing this as a favor to Alina.', src: 'https://i.ibb.co/QFHZnXDj/unnamed-2.jpg' }
+        ];
+
+        let currentAvatarRiddleIndex = Math.floor(Math.random() * avatarProfiles.length);
+        let currentGeneratedRiddle = { riddle: "", answer: "" }; // Will be populated by Gemini
+        let welcomeMessageLoading = false;
+        let giftIdeasLoading = false; 
+        let poemLoading = false; 
+        let wishLoading = false; 
+        let gameLoading = false; // NEW
+
+        let globalGuestName = "";
+        let globalGuestRelation = "";
+        
+        // --- ✨ Game State Variables ---
+        let gameSecretItem = "";
+        let questionsRemaining = 10;
+        let gameHistory = []; // To store conversation for context
+        let lastScreenBeforeGame = 'success'; // To know where to return
+
+        // --- ✨ Gemini API Helper Functions ---
+        
+        /** Simple exponential backoff */
+        function exponentialBackoff(fn, retries = 3, delay = 1000) {
+            return new Promise((resolve, reject) => {
+                async function retry() {
+                    try { const res = await fn(); resolve(res); } 
+                    catch (err) {
+                        if (retries > 0) { setTimeout(retry, delay); retries--; delay *= 2; } 
+                        else { reject(err); }
+                    }
+                }
+                retry();
+            });
+        }
+        
+        /** Generic Gemini Call */
+        async function callGemini(prompt, isJsonResponse = false) {
+             const payload = { contents: [{ parts: [{ text: prompt }] }] };
+             if (isJsonResponse) {
+                 payload.generationConfig = { responseMimeType: "application/json" };
+             }
+             
+             const apiCall = () => fetch(GEMINI_API_URL, {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify(payload)
+             });
+
+             const response = await exponentialBackoff(apiCall);
+             if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+             const result = await response.json();
+             
+             if (!result.candidates || !result.candidates[0]?.content?.parts[0]?.text) {
+                 // Check if it's a safety block
+                 if (result.promptFeedback?.blockReason) {
+                     console.error("Gemini call blocked:", result.promptFeedback.blockReason);
+                     throw new Error(`API call blocked due to: ${result.promptFeedback.blockReason}`);
+                 }
+                 // Otherwise, it's an unexpected structure
+                 console.error("Invalid response structure:", JSON.stringify(result, null, 2));
+                 throw new Error("Invalid response structure from Gemini API");
+             }
+             
+             return result.candidates[0].content.parts[0].text;
+        }
+
+
+        /** ✨ Generate Spooky Quote */
+        async function generateSpookyQuote() {
+            quoteLoadingBox.classList.remove('hidden');
+            quoteContentBox.classList.add('hidden');
+            const prompt = `You are a spooky spirit. Generate one single, classic-style, spooky Halloween quote. It should be one sentence long. Return ONLY the quote as a single string.`;
+            try {
+                let text = await callGemini(prompt);
+                quoteTextDisplay.textContent = text.replace(/\"/g, ''); 
+            } catch (error) {
+                console.error("Gemini quote generation failed:", error);
+                quoteTextDisplay.textContent = `"When witches go riding..."`; // Fallback
+            } finally {
+                quoteLoadingBox.classList.add('hidden');
+                quoteContentBox.classList.remove('hidden');
+            }
+        }
+
+        /** ✨ Generate Dynamic Riddle */
+        async function generateDynamicRiddle(persona) {
+            gatekeeperButton.disabled = true; 
+            riddleLoadingBox.classList.remove('hidden');
+            riddleContentBox.classList.add('hidden');
+            const prompt = `Create a classic, one-sentence riddle and its simple, one or two-word answer, spoken by a character with persona: "${persona}". Return ONLY a JSON object: {"riddle": "Your riddle", "answer": "Your answer"}`;
+            try {
+                const jsonText = await callGemini(prompt, true);
+                const parsed = JSON.parse(jsonText);
+                currentGeneratedRiddle = { riddle: parsed.riddle, answer: parsed.answer.toLowerCase().trim() };
+                riddleText.textContent = `"${currentGeneratedRiddle.riddle}"`;
+            } catch (error) {
+                console.error("Gemini riddle generation failed:", error);
+                currentGeneratedRiddle = { riddle: "I have cities, but no houses...?", answer: "a map" }; // Fallback
+                riddleText.textContent = `"${currentGeneratedRiddle.riddle}"`;
+            } finally {
+                gatekeeperButton.disabled = false;
+                riddleLoadingBox.classList.add('hidden');
+                riddleContentBox.classList.remove('hidden');
+            }
+        }
+
+        /** ✨ Get Gift Ideas */
+        async function getGiftIdeas(targetBoxId) {
+             if (giftIdeasLoading) return; giftIdeasLoading = true;
+             const targetBox = document.getElementById(targetBoxId);
+             targetBox.classList.remove('hidden');
+             targetBox.innerHTML = '<div class="spinner mx-auto"></div><p>Brewing ideas...</p>';
+             const prompt = `Suggest 4-5 fun birthday gift ideas for girls 11-15, easy to find (bookstores, toy stores, markets). Start with 'Here are a few great ideas...' Use bullet points.`;
+             try {
+                 let text = await callGemini(prompt);
+                 text = text.replace(/\n/g, '<br>').replace(/\* /g, '<br>• ');
+                 targetBox.innerHTML = text;
+             } catch (error) {
+                 console.error("Gemini gift generation failed:", error);
+                 targetBox.innerHTML = "The spirits are stumped!";
+             } finally {
+                 giftIdeasLoading = false;
+                 document.getElementById(targetBoxId.replace('-box', '-btn')).classList.add('hidden');
+             }
+        }
+        
+        /** ✨ Generate Welcome Message */
+        async function generateWelcomeMessage(guestName, guestRelation, targetElement) {
+            welcomeMessageLoading = true;
+            targetElement.innerHTML = `<div class="spinner mx-auto"></div>`; 
+            const prompt = `You are a spooky gatekeeper for Alina's 11th Halloween birthday. Guest: "${guestName}" (${guestRelation}). Write a short, single-sentence, spooky but fun welcome. No exclamation points.`;
+            try {
+                let text = await callGemini(prompt);
+                targetElement.textContent = text.replace(/\"/g, ''); 
+            } catch (error) {
+                console.error("Gemini welcome message failed:", error);
+                targetElement.textContent = `Welcome, ${guestName}!`; // Fallback
+            } finally {
+                welcomeMessageLoading = false;
+            }
+        }
+
+        /** ✨ Get Birthday Poem */
+        async function getBirthdayPoem(targetBoxId) {
+            if (poemLoading) return; poemLoading = true;
+            const targetBox = document.getElementById(targetBoxId);
+            targetBox.classList.remove('hidden');
+            targetBox.innerHTML = '<div class="spinner mx-auto"></div><p>Writing a verse...</p>';
+            const prompt = `You are a fun, spooky poet. Guest: "${globalGuestName}" (Alina's "${globalGuestRelation}"). Write a short, 4-line birthday poem for Alina (11th birthday on Halloween). Celebratory, spooky, fun. Start with 'Here is a special verse for Alina from ${globalGuestName}...'`;
+            try {
+                let text = await callGemini(prompt);
+                text = text.replace(/\n/g, '<br>');
+                targetBox.innerHTML = text;
+            } catch (error) {
+                console.error("Gemini poem generation failed:", error);
+                targetBox.innerHTML = "The poet's ghost got shy!";
+            } finally {
+                poemLoading = false;
+                 document.getElementById(targetBoxId.replace('-box', '-btn')).classList.add('hidden');
+            }
+        }
+        
+        /** ✨ Get Birthday Wish */
+        async function getBirthdayWish(targetBoxId) {
+            if (wishLoading) return; wishLoading = true;
+            const targetBox = document.getElementById(targetBoxId);
+            targetBox.classList.remove('hidden');
+            targetBox.innerHTML = '<div class="spinner mx-auto"></div><p>Conjuring a wish...</p>';
+            const prompt = `You are a fun, spooky character. Guest: "${globalGuestName}" (Alina's "${globalGuestRelation}"). Write a unique, 2-3 sentence birthday wish for Alina (11th birthday on Halloween). Celebratory, spooky, fun. Start with 'A spooky birthday wish flies your way from ${globalGuestName}...'`;
+            try {
+                let text = await callGemini(prompt);
+                text = text.replace(/\n/g, '<br>');
+                targetBox.innerHTML = text;
+            } catch (error) {
+                console.error("Gemini wish generation failed:", error);
+                targetBox.innerHTML = "The wish-granting ghoul is busy!";
+            } finally {
+                wishLoading = false;
+                 document.getElementById(targetBoxId.replace('-box', '-btn')).classList.add('hidden');
+            }
+        }
+
+        // --- ✨ NEW GAME FUNCTIONS ---
+
+        /** ✨ Starts the 10 Questions Game */
+        async function startGame(originScreen) {
+             if (gameLoading) return; gameLoading = true;
+             lastScreenBeforeGame = originScreen; // Remember where we came from
+             playSound(swooshSound);
+             showScreen(gameScreen);
+             
+             // Reset game UI
+             questionsRemaining = 10;
+             questionsLeftDisplay.textContent = `Questions Left: ${questionsRemaining}`;
+             gameHistory = [];
+             gameHistoryDisplay.innerHTML = '<p>Thinking of something spooky or birthday related...</p>';
+             questionInput.value = '';
+             guessInput.value = '';
+             gameActiveArea.classList.remove('hidden');
+             gameResultArea.classList.add('hidden');
+             askButton.disabled = true;
+             guessButton.disabled = true;
+             
+             // Ask Gemini to pick a secret item
+             const prompt = `I am playing a 10 Questions game for an 11-year-old's Halloween birthday party. Think of a specific item, person, creature, or concept related to Halloween OR birthdays (e.g., 'a carved pumpkin', 'birthday cake', 'a friendly ghost', 'eleven candles', 'a vampire costume', 'a wrapped present'). Return ONLY the name of the thing you thought of, in quotes. Example: "a black cat"`;
+             
+             try {
+                 gameSecretItem = await callGemini(prompt);
+                 gameSecretItem = gameSecretItem.replace(/\"/g, '').trim(); // Clean up
+                 gameHistoryDisplay.innerHTML = '<p>Okay, I\'ve thought of something! Ask your first Yes/No question.</p>';
+                 askButton.disabled = false;
+                 guessButton.disabled = false;
+                 
+             } catch (error) {
+                  console.error("Gemini failed to pick secret item:", error);
+                  gameHistoryDisplay.innerHTML = '<p>The spirits are confused... try starting the game again!</p>';
+                  // Keep buttons disabled
+             } finally {
+                 gameLoading = false;
+             }
+        }
+
+        /** ✨ Asks Gemini a Yes/No Question */
+        async function askQuestion() {
+            if (gameLoading || questionsRemaining <= 0) return;
+            
+            const question = questionInput.value.trim();
+            if (!question) return; // Ignore empty questions
+            
+            gameLoading = true;
+            askButton.disabled = true;
+            guessButton.disabled = true;
+            
+            // Add user question to history
+            gameHistory.push({ role: "user", parts: [{ text: question }] });
+            updateGameHistoryDisplay(`<p class="user-q">You: ${question}</p>`);
+            questionInput.value = ''; // Clear input
+
+            questionsRemaining--;
+            questionsLeftDisplay.textContent = `Questions Left: ${questionsRemaining}`;
+
+            // Build conversation history string for the prompt
+            let historyString = gameHistory.map(entry => `${entry.role === 'user' ? 'User' : 'Ghost'}: ${entry.parts[0].text}`).join('\n');
+
+            const prompt = `You are playing a 10 Questions game. The secret item is "${gameSecretItem}". Answer the latest user question truthfully based ONLY on the secret item. Use ONLY "Yes", "No", or "Maybe". Do not explain.
+            
+            Conversation History:
+            ${historyString}
+            
+            Latest Question: ${question}
+            Your Answer (Yes/No/Maybe Only):`;
+            
+            try {
+                 let answer = await callGemini(prompt);
+                 // Aggressive cleanup: Find the first instance of Yes, No, or Maybe and take only that word.
+                 const match = answer.match(/\b(Yes|No|Maybe)\b/i);
+                 answer = match ? match[0] : "Maybe"; // Default to Maybe if cleanup fails
+                 
+                 // Add Gemini answer to history
+                 gameHistory.push({ role: "model", parts: [{ text: answer }] });
+                 updateGameHistoryDisplay(`<p class="gemini-a">Ghost: ${answer}</p>`);
+                 
+                 if (questionsRemaining <= 0) {
+                     endGame("Too many questions!");
+                 }
+                 
+            } catch (error) {
+                 console.error("Gemini failed to answer question:", error);
+                 updateGameHistoryDisplay(`<p class="gemini-a">Ghost: My spectral connection failed... try again?</p>`);
+                 questionsRemaining++; // Give question back
+                 questionsLeftDisplay.textContent = `Questions Left: ${questionsRemaining}`;
+            } finally {
+                 gameLoading = false;
+                 if (questionsRemaining > 0) {
+                     askButton.disabled = false;
+                     guessButton.disabled = false;
+                 } else {
+                     // Ensure buttons are disabled if out of questions
+                     askButton.disabled = true;
+                     // Allow final guess even if out of questions
+                     guessButton.disabled = false; 
+                 }
+            }
+        }
+
+        /** ✨ Makes the Final Guess */
+        async function makeGuess() {
+            if (gameLoading) return;
+            const guess = guessInput.value.trim();
+            if (!guess) return; // Ignore empty guess
+            
+            gameLoading = true;
+            askButton.disabled = true;
+            guessButton.disabled = true;
+            
+            updateGameHistoryDisplay(`<p class="user-q">You Guess: ${guess}</p>`);
+
+            const prompt = `You are playing a 10 Questions game. The secret item is "${gameSecretItem}". The user's final guess is "${guess}". Is the guess correct or very close (e.g., "pumpkin" vs "carved pumpkin")? Answer ONLY "Correct" or "Incorrect".`;
+            
+            try {
+                let result = await callGemini(prompt);
+                 const match = result.match(/\b(Correct|Incorrect)\b/i);
+                 result = match ? match[0] : "Incorrect"; // Default to Incorrect
+                
+                if (result.toLowerCase() === 'correct') {
+                    endGame("You guessed it!", true);
+                    playSound(correctSound);
+                } else {
+                    endGame("Not quite!", false);
+                    playSound(wrongSound);
+                }
+            } catch (error) {
+                 console.error("Gemini failed to evaluate guess:", error);
+                 updateGameHistoryDisplay(`<p class="gemini-a">Ghost: Error evaluating guess!</p>`);
+                 endGame("Error!"); // End game on error
+            } finally {
+                gameLoading = false;
+            }
+        }
+        
+        /** Updates the game history display */
+        function updateGameHistoryDisplay(newLine) {
+             gameHistoryDisplay.innerHTML += newLine;
+             gameHistoryDisplay.scrollTop = gameHistoryDisplay.scrollHeight; // Auto-scroll
+        }
+        
+        /** Ends the game and shows results */
+        function endGame(message, isWin = false) {
+             gameActiveArea.classList.add('hidden');
+             gameResultArea.classList.remove('hidden');
+             
+             if (isWin) {
+                 gameResultText.textContent = `👻 ${message} You Win! The item was "${gameSecretItem}". 👻`;
+                 gameResultText.className = 'game-result win';
+             } else {
+                 gameResultText.textContent = `🎃 ${message} The item was "${gameSecretItem}". Better luck next time! 🎃`;
+                 gameResultText.className = 'game-result lose';
+             }
+             questionsLeftDisplay.textContent = `Game Over!`;
+        }
+        
+        /** Returns from game screen to the previous invitation screen */
+        function returnToInvitation() {
+            playSound(swooshSound);
+            if(lastScreenBeforeGame === 'success') {
+                showScreen(successScreen);
+            } else {
+                showScreen(consolationScreen);
+            }
+        }
+
+
+        // --- Audio Helper ---
+        function playSound(audioElement) {
+            // Check if audio context needs to be resumed (for browser autoplay policies)
+             if (audioElement.paused && audioElement.readyState >= 3) { // Ready to play
+                audioElement.play().catch(e => console.warn("Audio play error:", e));
+             } else if (audioElement.readyState < 3) {
+                 // If not ready, listen for 'canplaythrough' event
+                 audioElement.addEventListener('canplaythrough', () => {
+                     audioElement.play().catch(e => console.warn("Audio play error:", e));
+                 }, { once: true }); // Play only once when ready
+             }
+        }
+
+        // --- NAVIGATION FUNCTIONS ---
+        function showScreen(screenToShow) {
+             // Include gameScreen in the list to hide
+            [grandTitleScreen, warningScreen, gatekeeperScreen, successScreen, consolationScreen, gameScreen].forEach(screen => {
+                if (screen === screenToShow) {
+                    screen.classList.remove('hidden');
+                } else {
+                    screen.classList.add('hidden');
+                }
+            });
+        }
+
+        function showWarningScreen() {
+            playSound(swooshSound);
+            showScreen(warningScreen);
+            // ✨ Call Gemini for the new dynamic quote
+            generateSpookyQuote();
+        }
+
+        function showRiddleScreen() {
+            playSound(swooshSound);
+            showScreen(gatekeeperScreen);
+            
+            // Populate avatar
+            const selectedProfile = avatarProfiles[currentAvatarRiddleIndex];
+            avatarImage.src = selectedProfile.src;
+            
+            // Clear inputs and error
+            guestNameInput.value = '';
+            riddleAnswerInput.value = '';
+            guestRelationInput.value = '';
+            errorMessage.classList.add('hidden');
+
+            // ✨ Call Gemini for the riddle
+            generateDynamicRiddle(selectedProfile.persona);
+        }
+
+        async function checkRiddleAndDetails() { // MADE ASYNC
+            const guestName = guestNameInput.value.trim();
+            const guestRiddleAnswer = riddleAnswerInput.value.toLowerCase().trim();
+            const guestRelation = guestRelationInput.value.trim();
+            const correctRiddleAnswer = currentGeneratedRiddle.answer; // Use Gemini's answer
+
+            errorMessage.classList.add('hidden'); // Hide any previous error
+
+            if (guestName === '') {
+                errorMessage.textContent = "The spirits demand to know your name!";
+                errorMessage.classList.remove('hidden');
+                playSound(wrongSound);
+                return;
+            }
+            
+            if (guestRelation === '') {
+                errorMessage.textContent = "State your connection to Alina, or be forever lost!";
+                errorMessage.classList.remove('hidden');
+                playSound(wrongSound);
+                return;
+            }
+
+            // NEW: Set global vars
+            globalGuestName = guestName;
+            globalGuestRelation = guestRelation;
+
+            playSound(bgMusic); // <-- MUSIC PLAYS ON SCREEN 4
+
+            if (guestRiddleAnswer === correctRiddleAnswer) {
+                playSound(correctSound);
+                // ✨ Call Gemini for welcome message
+                generateWelcomeMessage(guestName, guestRelation, successGuestName);
+                showScreen(successScreen);
+            } else {
+                playSound(wrongSound);
+                // ✨ Call Gemini for welcome message
+                generateWelcomeMessage(guestName, guestRelation, consolationGuestName);
+                correctRiddleAnswerSpan.textContent = `"${correctRiddleAnswer}"`;
+                showScreen(consolationScreen);
+            }
+        }
+    </script>
+</body>
+</html>
+
