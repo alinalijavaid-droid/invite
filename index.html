@@ -484,9 +484,8 @@
 
     <script>
         // --- ✨ Gemini API Constants ---
-        // FIX: Reverted key to an empty string ("")
-        // This allows the environment to provide a working key.
-        // To run this on your own server, replace "" with your own API key.
+        // FIX: The previous key was a non-working placeholder.
+        // You MUST replace "YOUR_API_KEY_HERE" with your own valid key from Google AI Studio.
         const apiKey = "AIzaSyA41Znf1GTroZTXTe3UqyyqARNzMSgjQzg"; 
         const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
@@ -993,5 +992,6 @@
     </script>
 </body>
 </html>
+
 
 
