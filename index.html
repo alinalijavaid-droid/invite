@@ -3,761 +3,1093 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Ghoulish Gala! | Alina's 11th Birthday!</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Eater&family=Mystery+Quest&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <title>Alina's 11th Birthday Gala</title>
+    
+    <!-- Fonts --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    
     <style>
+        /* --- 1. Root Variables (Theme) --- */
+        :root {
+            /* Fonts */
+            --font-body: 'Inter', sans-serif;
+            --font-display: 'Great Vibes', cursive;
+            
+            /* Core Colors */
+            --color-bg: linear-gradient(135deg, #2a004f 0%, #F25AB6 100%); 
+            --color-surface: rgba(30, 30, 30, 0.75); 
+            --color-text: #ffffff; 
+            --color-text-dim: #e0e0e0; 
+            
+            /* Accent Colors */
+            --color-accent: #F25AB6; 
+            --color-accent-secondary: #8a2be2; 
+            --color-accent-glow: rgba(242, 90, 182, 0.5); 
+
+            /* Other */
+            --border-radius: 12px;
+            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --shadow-strong: 0 0 25px var(--color-accent-glow);
+
+            /* NEW Firework Colors */
+            --firework-color-1: #FFD700; /* Gold */
+            --firework-color-2: #8A2BE2; /* Blue Violet */
+            --firework-color-3: #FF69B4; /* Hot Pink */
+            --firework-color-4: #00FFFF; /* Aqua */
+        }
+
+        /* --- 2. Base Styles --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body {
-            background: #0d051c;
-            color: #fff;
+            font-family: var(--font-body);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 85% 20%, rgba(217, 0, 128, 0.2) 0%, transparent 40%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.8)"/><circle cx="50" cy="60" r="0.8" fill="rgba(255,255,255,0.7)"/><circle cx="80" cy="20" r="1.2" fill="rgba(255,255,255,0.9)"/></svg>'),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><circle cx="20" cy="70" r="0.9" fill="rgba(255,255,255,0.7)"/><circle cx="90" cy="30" r="1.1" fill="rgba(255,255,255,0.8)"/></svg>'),
+                var(--color-bg); 
+            background-attachment: fixed;
+            background-size: 150% 150%, 150% 150%, 100px 100px, 120px 120px, cover; 
+            background-position: 0 0, 0 0, 0 0, 0 0, center center;
+            animation: moveNebula 20s linear infinite alternate, twinkle 5s linear infinite; 
+            color: var(--color-text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem; 
+            overflow: hidden; 
+            position: relative;
+        }
+        
+        /* --- 3. Background Animations (Unchanged) --- */
+        @keyframes moveNebula {
+            0% { background-position: 0% 0%, 100% 100%, 0 0, 0 0, center center; }
+            100% { background-position: 100% 100%, 0% 0%, 0 0, 0 0, center center; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.5; }
+        }
+
+        /* --- 4. Floating Flowers & Shooting Stars --- */
+        .flowers-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-        }
-        .screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column; text-align: center; padding: 1rem;
-            transition: opacity 1s ease-out, transform 1s ease-out;
-            z-index: 10;
-             overflow-y: auto;
-        }
-        .screen.hidden { opacity: 0; transform: translateY(100%); pointer-events: none; z-index: 1; }
-
-        .pro-font {
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 1px 1px #000, 0 1px 3px #000;
-        }
-        .floating-ghost, .flying-bat {
-            position: absolute;
-            opacity: 0.8;
             pointer-events: none;
-            z-index: 5;
-        }
-        .floating-ghost { animation: float 10s ease-in-out infinite; }
-        .flying-bat { animation: fly 8s linear infinite; }
-        @keyframes float { 50% { transform: translateY(-20px); } }
-        @keyframes fly { 50% { transform: translate(15px, -15px) scale(1.1); } }
-
-        #grand-title-screen { background: url("https://i.ibb.co/5hTY8vVT/halloween-background-yqfav572bob9eeka.jpg") no-repeat center center; background-size: cover; }
-        .main-title {
-            font-family: 'Eater', cursive;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            line-height: 1.1;
-        }
-        .sub-title {
-            font-family: 'Creepster', cursive;
-            font-size: clamp(2rem, 6vw, 3rem);
-            margin-top: 1rem;
+            z-index: 0;
         }
 
-        .fun-button {
-            font-family: 'Creepster', cursive;
-            font-size: 1.25rem;
-            letter-spacing: 2px;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(45deg, #ff4e00, #ff8c00);
-            color: #fff;
-            border-radius: 50px; cursor: pointer; border: 2px solid #ff8c00;
-            box-shadow: 0 0 10px #ff4e00, inset 0 0 5px #ff8c00;
-            margin-top: 1rem;
-            text-shadow: 0 0 5px #000;
-            transition: all 0.3s ease;
-             display: inline-block;
-             min-width: 180px;
+        .flowers-container i {
+            position: absolute;
+            bottom: -20px;
+            display: block;
+            font-style: normal;
+            color: rgba(255, 255, 255, 0.15);
+            animation: float-up 20s linear infinite;
         }
-        .fun-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: 0 0 10px #ff4e00, inset 0 0 5px #ff8c00;
+        
+        .flowers-container i:nth-child(1) { left: 10%; font-size: 20px; animation-duration: 15s; animation-delay: 0s; }
+        .flowers-container i:nth-child(2) { left: 20%; font-size: 14px; animation-duration: 20s; animation-delay: 5s; }
+        .flowers-container i:nth-child(3) { left: 30%; font-size: 24px; animation-duration: 18s; animation-delay: 2s; }
+        .flowers-container i:nth-child(4) { left: 40%; font-size: 12px; animation-duration: 25s; animation-delay: 8s; }
+        .flowers-container i:nth-child(5) { left: 50%; font-size: 18px; animation-duration: 16s; animation-delay: 3s; }
+        .flowers-container i:nth-child(6) { left: 60%; font-size: 22px; animation-duration: 19s; animation-delay: 1s; }
+        .flowers-container i:nth-child(7) { left: 70%; font-size: 16px; animation-duration: 22s; animation-delay: 6s; }
+        .flowers-container i:nth-child(8) { left: 80%; font-size: 14px; animation-duration: 24s; animation-delay: 4s; }
+        .flowers-container i:nth-child(9) { left: 90%; font-size: 20px; animation-duration: 17s; animation-delay: 7s; }
+        .flowers-container i:nth-child(10) { left: 55%; font-size: 16px; animation-duration: 21s; animation-delay: 9s; }
+
+        @keyframes float-up {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0.3; }
+        }
+        
+        .shooting-stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+            transform: rotate(20deg);
+        }
+        
+        .shooting-star {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(-45deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+            animation: shoot 5s linear infinite;
+        }
+        
+        .shooting-star:nth-child(1) { top: 10%; left: -100%; width: 200px; animation-delay: 0s; animation-duration: 4s; }
+        .shooting-star:nth-child(2) { top: 30%; left: -100%; width: 120px; animation-delay: 1.5s; animation-duration: 5s; }
+        .shooting-star:nth-child(3) { top: 60%; left: -100%; width: 250px; animation-delay: 3s; animation-duration: 3.5s; }
+        .shooting-star:nth-child(4) { top: 40%; left: -100%; width: 180px; animation-delay: 0.5s; animation-duration: 3s; }
+        .shooting-star:nth-child(5) { top: 75%; left: -100%; width: 100px; animation-delay: 2.5s; animation-duration: 5.5s; }
+        .shooting-star:nth-child(6) { top: 20%; left: -100%; width: 300px; animation-delay: 4s; animation-duration: 3s; } 
+
+
+        @keyframes shoot {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(150vw); opacity: 0; }
         }
 
-        @media (min-width: 640px) {
-            .fun-button {
-                font-size: 1.5rem;
-                padding: 1rem 2.5rem;
-                 margin-top: 2rem;
-                 min-width: 220px;
+        /* --- REVISED: Fireworks --- */
+        .fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .firework {
+            position: absolute;
+            transform: translate(-50%, -50%); /* Center based on its own size */
+            opacity: 0;
+            animation: firework-launch 5s infinite; /* Initial launch animation */
+            border-radius: 50%; /* Start as a dot */
+            filter: blur(0.5px); /* Soften the edges */
+        }
+        
+        .firework::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            opacity: 0;
+            animation: firework-burst 0.8s ease-out forwards; /* Burst animation */
+            animation-delay: var(--burst-delay); /* Controlled by JS */
+            background-image: radial-gradient(circle, var(--firework-color) 10%, transparent 70%);
+            width: var(--firework-size);
+            height: var(--firework-size);
+        }
+
+        /* Keyframes for firework launch */
+        @keyframes firework-launch {
+            0% { opacity: 0; transform: translate(var(--start-x), var(--start-y)) scale(0.2); }
+            5% { opacity: 1; transform: translate(var(--start-x), var(--launch-peak-y)) scale(0.5); }
+            10% { opacity: 0; transform: translate(var(--start-x), var(--launch-peak-y)) scale(0.5); } /* Disappears before burst */
+            100% { opacity: 0; transform: translate(var(--start-x), var(--start-y)); }
+        }
+
+        /* Keyframes for firework burst */
+        @keyframes firework-burst {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; filter: blur(3px); }
+        }
+
+        /* --- 5. Main Invitation Card --- */
+        .invitation-container {
+            width: 100%;
+            max-width: 420px; 
+            height: 85vh;
+            max-height: 700px;
+            min-height: 480px;
+            background-color: var(--color-surface);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light), 0 0 40px var(--color-accent-glow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            overflow: hidden; 
+            position: relative;
+            z-index: 1; 
+            animation: pulse-glow 5s infinite alternate, breathe-scale 5s infinite alternate;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* For short screens (like landscape phones) */
+        @media (max-height: 480px) {
+            .invitation-container {
+                min-height: 0; 
+                height: 95vh; 
             }
         }
-        .fun-button:hover:not(:disabled) {
-            transform: scale(1.1) rotate(-5deg);
-            box-shadow: 0 0 15px #ff4e00, 0 0 5px #ff8c00, inset 0 0 5px #ff8c00;
+
+        @keyframes pulse-glow {
+            from { box-shadow: var(--shadow-light), 0 0 30px var(--color-accent-glow); }
+            to { box-shadow: var(--shadow-light), 0 0 50px rgba(138, 43, 226, 0.7); }
+        }
+        
+        @keyframes breathe-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.01); }
         }
 
-        #warning-screen { background: url('https://i.ibb.co/7xyGvPSx/avatars-8.jpg') no-repeat center center; background-size: cover; }
-        .quote-text {
-            font-family: 'Mystery Quest', cursive;
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            max-width: 600px;
-            margin-top: 1.5rem;
+        /* --- 6. Page Structure & Transitions --- */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 1.5rem; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+            overflow-y: auto; 
+            padding-bottom: 3rem; 
         }
-        .quote-loading-text {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
+        
+        .page.active { transform: translateX(0); }
+        .page.left { transform: translateX(-100%); }
+
+        #page-welcome {
+            justify-content: flex-start; 
+            padding-top: 3rem; 
         }
 
-        .gatekeeper-card {
-            background: #1a0c2e;
-            border: 4px solid #00f6ff;
-            box-shadow: 0 0 15px #00f6ff;
-            border-radius: 20px;
-            padding: 1.5rem;
-            width: calc(100% - 2rem);
-            max-width: 500px;
+
+        /* --- 7. Page 1: SPLASH SCREEN --- */
+        #page-splash .splash-icon {
+            width: 80%;
+            max-width: 280px;
+            height: auto;
+            margin: 0 auto 20px;
+            animation: logo-pulse-glow 3s infinite alternate;
+            /* REMOVED border-radius: 50% */
+            /* REMOVED box-shadow: 0 5px 15px rgba(0,0,0,0.2); */
         }
-        @media (min-width: 640px) {
-            .gatekeeper-card {
-                padding: 2rem;
+        
+        #page-splash .splash-icon img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px; /* RESTORED original border-radius */
+            display: block; /* Remove extra space below img */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* RESTORED original box-shadow */
+        }
+
+        @keyframes logo-pulse-glow {
+             from {
+                filter: drop-shadow(0 0 15px var(--color-accent-glow));
+                transform: scale(1);
+            }
+            to {
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.7));
+                transform: scale(1.03);
             }
         }
 
-        .riddle-prompt-text {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.25rem;
+        #page-splash h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 15vw, 4rem); 
+            color: white;
+            margin: 0;
+            text-shadow: 0 0 15px var(--color-accent-glow);
         }
-        .riddle-text {
-             font-family: 'Mystery Quest', cursive;
-            font-size: 1.25rem;
-            margin-top: 1rem;
+
+        #page-splash h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 8vw, 2.2rem);
+            color: var(--color-accent);
+            margin-top: 5px; 
+            margin-bottom: 25px;
         }
-         @media (min-width: 640px) {
-            .riddle-text {
-                font-size: 1.5rem;
-            }
+
+        #page-splash p {
+            font-size: clamp(1rem, 4.5vw, 1.2rem);
+            color: var(--color-text); 
+            font-weight: 500; 
+            margin: 0 0 30px;
         }
-        .fun-input {
-            font-family: 'Poppins', sans-serif;
+
+        /* --- 8. Page 2: INPUT SCREEN --- */
+        #page-input .logo-small {
+            width: 120px; 
+            height: auto;
+            margin-bottom: 20px;
+            animation: logo-pulse-glow 3s infinite alternate;
+            /* REMOVED border-radius: 50% */
+        }
+        #page-input .logo-small img {
+            width: 100%;
+            height: auto;
+            /* REMOVED border-radius: 50%; */
+            /* This rule is no longer needed as the logo isn't round */
+        }
+
+        #page-input h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 10vw, 2.5rem);
+            color: white;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        #page-input p {
+            font-size: clamp(1rem, 4.5vw, 1.2rem);
+            color: var(--color-text); 
+            font-weight: 500; 
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        /* --- 9. Page 3: WELCOME SCREEN --- */
+        #page-welcome .logo-small {
+            width: 120px; 
+            height: auto;
+            margin-bottom: 15px;
+            animation: logo-pulse-glow 3s infinite alternate;
+            /* REMOVED border-radius: 50% */
+        }
+        #page-welcome .logo-small img {
+            width: 100%;
+            height: auto;
+            /* REMOVED border-radius: 50%; */
+            /* This rule is no longer needed */
+        }
+
+        #page-welcome h1 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 9vw, 2.5rem);
+            color: white;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        #page-welcome h2 {
+            font-size: 1.1rem;
+            color: var(--color-accent);
+            margin: 10px 0;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .party-details {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            width: 100%;
+            max-width: 320px;
+            box-sizing: border-box;
+            margin: 20px 0;
+            font-size: 1rem; 
+            color: var(--color-text);
+            text-align: left;
+        }
+        
+        .party-details div {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .party-details div:last-child {
+            margin-bottom: 0;
+        }
+        
+        .party-details strong {
+            display: block; 
+            color: var(--color-accent); 
             font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .dress-code-helper {
+            font-size: 0.9rem;
+            color: var(--color-accent);
+            text-decoration: underline;
+            cursor: pointer;
+            margin-left: 5px;
+            font-weight: 700;
+        }
+
+        .message-box {
+            width: 100%;
+            max-width: 320px;
+            margin-top: 20px;
+        }
+        
+        #generated-bday-message {
+            font-size: 0.95rem; 
+            font-style: italic;
+            color: var(--color-text); 
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem; 
+            min-height: 3em;
+            margin-top: 15px;
+            line-height: 1.5;
+            text-align: left; 
+        }
+
+        /* --- 10. Form Elements & Buttons --- */
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
             font-size: 1rem;
-            background: #1a0c2e; border: 2px solid #00f6ff;
-            color: #00f6ff; text-align: center; border-radius: 10px;
-            padding: 0.5rem; transition: all 0.3s;
-            box-shadow: 0 0 5px #00f6ff;
+            font-family: var(--font-body);
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-text-dim);
+            border-radius: 8px;
+            color: var(--color-text);
+            transition: all 0.3s;
         }
-        .fun-input::placeholder { color: #00f6ff; opacity: 0.6; }
-        .fun-input:focus {
-            box-shadow: 0 0 10px #00f6ff;
+        
+        input[type="text"]:focus {
             outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 10px var(--color-accent-glow);
         }
-        .avatar-image {
-            width: 120px; height: 120px;
-            margin: auto; object-fit: cover;
-            border-radius: 50%; border: 4px solid #00f6ff;
-            box-shadow: 0 0 10px #00f6ff;
-            transition: transform 0.3s;
+
+        .btn {
+            background-color: var(--color-accent);
+            color: #121212;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px; 
+            padding: 14px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-strong);
+            width: 100%;
+            max-width: 300px; 
+            flex-grow: 0; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0; 
         }
-        @media (min-width: 640px) {
-            .avatar-image {
-                width: 150px; height: 150px;
-            }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px var(--color-accent-glow);
         }
-        .avatar-image:hover { transform: scale(1.1); }
+
+        /* --- 11. Loader & Error (Unchanged) --- */
+        #loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        #loader.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
 
         .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid rgba(0, 246, 255, 0.3);
-            border-top-color: #00f6ff;
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--color-text-dim);
+            border-top-color: var(--color-accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        #success-screen, #consolation-screen { background: url('https://i.ibb.co/1JtxRp6k/81-Ctw-Oy-Tur-L-UF1000-1000-QL80.jpg') no-repeat center center; background-size: cover; }
-        .result-card {
-            background: rgba(13, 5, 28, 0.85);
-            border: 5px solid; border-image-slice: 1;
-            border-radius: 20px;
-            padding: 1.5rem;
-            width: calc(100% - 2rem);
-            max-width: 600px;
-        }
-        @media (min-width: 640px) {
-            .result-card {
-                padding: 2rem;
-            }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        #success-screen .result-card { border-image-source: linear-gradient(45deg, #39ff14, #00f6ff); }
-        #consolation-screen .result-card { border-image-source: linear-gradient(45deg, #ff4e00, #ff0000); }
-
-        .result-title {
-            font-family: 'Eater', cursive;
-            font-size: clamp(2rem, 6vw, 3rem);
-            line-height: 1.1;
-            margin-bottom: 1rem;
+        #error-message {
+            color: #FF5555;
+            font-weight: 500;
+            margin-top: 15px;
+            min-height: 1.2em;
+            display: none;
+            flex-shrink: 0; 
         }
-
-        .result-card .text-lg {
-             font-size: clamp(1rem, 3vw, 1.125rem);
-        }
-
-        .welcome-message {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(1.25rem, 5vw, 1.5rem);
-            margin-bottom: 1rem;
-        }
-
-        .birthday-message {
-            font-family: 'Eater', cursive;
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            margin-bottom: 1rem;
-        }
-
-        .final-details p {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
-            line-height: 1.4;
-        }
-        @media (min-width: 640px) {
-            .final-details p {
-                font-size: 1.1rem;
-            }
-        }
-
-        .detail-title {
-            font-family: 'Creepster', cursive;
-            letter-spacing: 1px;
-            font-size: clamp(1.25rem, 5vw, 1.5rem);
+        #error-message.visible {
             display: block;
-            margin-bottom: 0.25rem;
         }
-        @media (min-width: 640px) {
-            .detail-title {
-                display: inline;
-                margin-bottom: 0;
-                margin-right: 0.5rem;
-            }
-        }
-        .gift-idea-box, .poem-box, .wish-box { /* Removed .game-output */
-            background: rgba(0,0,0,0.3);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-
-        /* --- REMOVED Styles for Guess the Word Game --- */
 
     </style>
 </head>
-<body class="pro-font">
-    <img src="https://i.ibb.co/jP7hf0KQ/hd-cartoon-halloween-ghost-scary-face-png-701751694865374drzx90dpmq-removebg-preview.png" class="floating-ghost" style="width: 80px; top: 10%; left: 5%;" alt="Ghost">
-    <img src="https://i.ibb.co/bTfdh0b/pngtree-bat-wings-clipart-white-background-with-a-cute-cartoon-bat-vector-png-image-6867852.png" style="width: 60px; top: 20%; right: 10%; animation-delay: -2s;" alt="Bat">
-    <img src="https://i.ibb.co/mCVqXJKb/pngtree-happy-bat-cartoon-png-image-16894267.png" class="flying-bat" style="width: 50px; top: 70%; left: 15%; animation-delay: -5s;" alt="Bat">
+<body>
 
-    <div id="grand-title-screen" class="screen">
-        <h1 class="main-title pro-font">A Monstrously Marvelous Ghoulish Gala</h1>
-        <h2 class="sub-title pro-font">You're Summoned to Alina's 11th Birthday Bash!</h2>
-        <button class="fun-button pro-font" onclick="showWarningScreen()">Enter if you Dare!</button>
+    <!-- Background Flowers --><div class="flowers-container">
+        <i>❀</i> <i>•</i> <i>❃</i> <i>•</i> <i>❀</i> <i>❃</i> <i>•</i> <i>❀</i> <i>❃</i> <i>•</i>
     </div>
-
-    <div id="warning-screen" class="screen hidden">
-        <div id="quote-loading-box">
-            <div class="spinner mx-auto" style="border-top-color: #f000ff;"></div>
-            <p class="quote-loading-text pro-font mt-4">Summoning a spirit's words...</p>
-        </div>
-        <div id="quote-content-box" class="hidden">
-            <p id="quote-text-display" class="quote-text pro-font">"When witches go riding, and black cats are seen, the moon laughs and whispers, 'tis near Halloween!"</p>
-        </div>
-        <button class="fun-button pro-font" onclick="showRiddleScreen()">Solve The Riddle to prove you are worthy!</button>
+    
+    <!-- Shooting Stars Container --><div class="shooting-stars-container">
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
     </div>
+    
+    <!-- REVISED: Fireworks Container --><div class="fireworks-container" id="fireworks-container">
+        <!-- Fireworks will be generated here by JavaScript --></div>
 
-    <div id="gatekeeper-screen" class="screen hidden">
-        <div class="gatekeeper-card">
-            <img id="avatar-image" class="avatar-image mb-4" src="https://i.ibb.co/QFHZnXDj/unnamed-2.jpg" alt="Alina's Spooky Avatar">
-            <div id="riddle-loading-box">
-                <div class="spinner mx-auto"></div>
-                <p class="riddle-prompt-text pro-font mb-2">Summoning a spirit...</p>
+
+    <!-- Main Card --><div class="invitation-container">
+
+        <!-- Page 1: Splash --><div id="page-splash" class="page active">
+            <div class="splash-icon">
+                <img id="alina-avatar-splash" src="https://i.ibb.co/KjvWzSSR/57c54714-cf29-48f8-a1f8-7c8c3d83933c-removebg-preview.png" alt="Alina's Logo">
             </div>
-            <div id="riddle-content-box" class="hidden">
-                <p id="riddle-prompt-text" class="riddle-prompt-text pro-font mb-2">A spirit appears and speaks:</p>
-                <p id="riddle-text" class="riddle-text pro-font mb-4">"I am a test..."</p>
-            </div>
-            <div class="space-y-4 mt-4">
-                <input id="guest-name" type="text" class="fun-input pro-font w-full" placeholder="What name shall I inscribe?">
-                <input id="riddle-answer" type="text" class="fun-input pro-font w-full" placeholder="Your cryptic answer, if you dare...">
-                <input id="guest-relation" type="text" class="fun-input pro-font w-full" placeholder="Your connection to the Birthday Spectre?">
-            </div>
-            <p id="error-message" class="text-red-400 text-sm mt-3 hidden"></p>
-            <button id="gatekeeper-button" class="fun-button pro-font mt-6" onclick="checkRiddleAndDetails()">Unveil Your Fate!</button>
+            <h1>The Gala</h1>
+            <h2>A Starlight Celebration</h2>
+            <p id="splash-hype-text"></p>
+            <button id="splash-btn" class="btn">Enter the Gala</button>
         </div>
-    </div>
 
-    <div id="success-screen" class="screen hidden">
-        <div class="result-card">
-            <h2 id="success-guest-name" class="welcome-message pro-font mb-2"></h2>
-            <h1 class="result-title success pro-font">You are Truly Worthy!</h1>
-            <p class="text-lg text-gray-200 mb-4 pro-font">Your wisdom has shone through the darkest of riddles!</p>
-
-            <h3 class="birthday-message pro-font">Happy 11th Birthday, Alina!</h3>
-
-            <div class="final-details text-left space-y-3 mt-6 border-t-2 border-green-400 pt-4">
-                <p class="pro-font"><span class="detail-title text-green-400">The Haunting Hour:</span> Friday, Oct 31st | 2:00 PM to 6:00 PM</p>
-                <p class="pro-font"><span class="detail-title text-cyan-400">The Spooky Spot:</span> House 333, Block G-3  (Our Home)<a href="https://maps.app.goo.gl/f1piNTxQnAR3kEAa9">
-                <img src="https://i.ibb.co/B2LKb5SF/images-1-removebg-preview.png" alt="W3Schools.com" width="100" height="132">
-            </a></p>
-                <p class="pro-font"><span class="detail-title text-yellow-400">Ghastly Garb:</span> Your Most Magical Costume! Brown, Grey, White</p>
+        <!-- Page 2: Input --><div id="page-input" class="page">
+            <div class="logo-small">
+                 <img id="alina-avatar-input" src="https://i.ibb.co/KjvWzSSR/57c54714-cf29-48f8-a1f8-7c8c3d83933c-removebg-preview.png" alt="Alina's Logo" >
             </div>
-            <p class="mt-4 text-yellow-300 pro-font">Prepare for birthday cake, spooky games, and fang-tastic treats!</p>
-
-            <button id="gift-idea-btn-success" class="fun-button pro-font mt-4" style="background: linear-gradient(45deg, #00f6ff, #39ff14); border-color: #39ff14; box-shadow: none;" onclick="getGiftIdeas('success-gift-box')">✨ Get Gift Ideas ✨</button>
-            <button id="poem-btn-success" class="fun-button pro-font mt-4" style="background: linear-gradient(45deg, #a855f7, #f000ff); border-color: #a855f7; box-shadow: none;" onclick="getBirthdayPoem('success-poem-box')">✨ Create a Birthday Verse ✨</button>
-            <button id="wish-btn-success" class="fun-button pro-font mt-4" style="background: linear-gradient(45deg, #ff8c00, #fde047); border-color: #fde047; box-shadow: none;" onclick="getBirthdayWish('success-wish-box')">✨ Craft a Spooky Birthday Wish ✨</button>
-            <!-- REMOVED Game Button -->
-
-            <div id="success-gift-box" class="gift-idea-box hidden pro-font"></div>
-            <div id="success-poem-box" class="poem-box hidden pro-font"></div>
-            <div id="success-wish-box" class="wish-box hidden pro-font"></div>
+            <h2>A Celebration Awaits</h2>
+            <p id="input-hype-text"></p>
+            
+            <div class="input-group">
+                <label for="guest-name">Your First Name:</label>
+                <input type="text" id="guest-name" placeholder="e.g., Sarah, Uncle Ben...">
+            </div>
+            <div class="input-group">
+                <label for="guest-relation">Your Relation to Alina:</label>
+                <input type="text" id="guest-relation" placeholder="e.g., Friend, Aunt, Grandparent...">
+            </div>
+            
+            <button id="input-btn" class="btn">Check Guest List</button>
+            <div id="error-message"></div> 
         </div>
-    </div>
 
-    <div id="consolation-screen" class="screen hidden">
-        <div class="result-card">
-            <h2 id="consolation-guest-name" class="welcome-message pro-font mb-2"></h2>
-            <h1 class="result-title consolation pro-font">The Riddle Remains a Mystery...</h1>
-            <p class="text-lg text-gray-200 mb-2 pro-font">The correct answer was: <span id="correct-riddle-answer" class="font-bold text-yellow-400"></span></p>
-            <p class="text-lg text-gray-200 mb-4 pro-font">But fear not! It's Alina's special day, and she compels us to still invite you to her:</p>
-
-            <h3 class="birthday-message pro-font">Happy 11th Birthday, Alina!</h3>
-
-            <div class="final-details text-left space-y-3 mt-6 border-t-2 border-orange-400 pt-4">
-                <p class="pro-font"><span class="detail-title text-green-400">The Haunting Hour:</span> Friday, Oct 31st | 2:00 PM to 6:00 PM</p>
-                <p class="pro-font"><span class="detail-title text-cyan-400">The Spooky Spot:</span> House 333, Block G-3 Juhar town (Our Home) 
-               <center> <h1>Follow the Map</h1><a href="https://maps.app.goo.gl/f1piNTxQnAR3kEAa9">
-                <img src="https://i.ibb.co/B2LKb5SF/images-1-removebg-preview.png" alt="W3Schools.com" width="50" height="50"> </a></p>
-            </a>  </p></center>
-                <p class="pro-font"><span class="detail-title text-yellow-400">Ghastly Garb:</span> Your Most Magical Costume! Brown, Grey, White!</p>
+        <!-- Page 3: Welcome --><div id="page-welcome" class="page">
+            <div class="logo-small">
+                 <img id="alina-avatar-welcome" src="https://i.ibb.co/KjvWzSSR/57c54714-cf29-48f8-a1f8-7c8c3d83933c-removebg-preview.png" alt="Alina's Logo" >
             </div>
-            <p class="mt-4 text-orange-300 pro-font">Prepare for birthday cake, spooky games, and fang-tastic treats!</p>
+            
+            <h1 id="welcome-title"></h1>
+            <h2 id="welcome-subtitle"></h2>
 
-            <button id="gift-idea-btn-consolation" class="fun-button pro-font mt-4" style="background: linear-gradient(45deg, #00f6ff, #39ff14); border-color: #39ff14; box-shadow: none;" onclick="getGiftIdeas('consolation-gift-box')">✨ Get Gift Ideas ✨</button>
-            <button id="poem-btn-consolation" class="fun-button pro-font mt-4" style="background: linear-gradient(45deg, #a855f7, #f000ff); border-color: #a855f7; box-shadow: none;" onclick="getBirthdayPoem('consolation-poem-box')">✨ Create a Birthday Verse ✨</button>
-            <button id="wish-btn-consolation" class="fun-button pro-font mt-4" style="background: linear-gradient(45deg, #ff8c00, #fde047); border-color: #fde047; box-shadow: none;" onclick="getBirthdayWish('consolation-wish-box')">✨ Craft a Spooky Birthday Wish ✨</button>
-            <!-- REMOVED Game Button -->
+            <div class="party-details">
+                <div><strong>Event:</strong> Alina's 11th Birthday Gala</div>
+                <div><strong>Date:</strong> 31st OF OCTOBER</div>
+                <div><strong>Time:</strong> 3:00 PM TO 7:00 PM</div>
+                <div><strong>Location:</strong> <a href="https://maps.app.goo.gl/f1piNTxQnAR3kEAa9" style="color:#ffffff;">OUR HOME</a></div>
+                <div>
+                    <strong>Dress Code:</strong> Starlight Chic 
+                    <span id="dress-code-btn" class="dress-code-helper">✨ What's this?</span>
+                </div>
+                <div>
+                    <strong>Need a Gift Idea?</strong>
+                    <span id="gift-idea-btn" class="dress-code-helper">🎁 Get Ideas!</span>
+                </div>
+            </div>
+            
+            <div class="message-box">
+                <div id="generated-bday-message">Click the helpers above for info!</div>
+            </div>
+        </div>
 
-            <div id="consolation-gift-box" class="gift-idea-box hidden pro-font"></div>
-            <div id="consolation-poem-box" class="poem-box hidden pro-font"></div>
-            <div id="consolation-wish-box" class="wish-box hidden pro-font"></div>
-            <center>
-                <h1>Play Game</h1>
-
-                <p><a href="https://gemini.google.com/share/c8f73d076319">
-                <img src="https://i.ibb.co/C31yYGn4/5260498.png" alt="W3Schools.com" width="100" height="132">
-        </a></p> </center>
+        <!-- Global Loader --><div id="loader">
+            <div class="spinner"></div>
         </div>
     </div>
-
-    <!-- REMOVED Screen 5: Guess The Word Game -->
-
-
-    <audio id="swoosh-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_73ed201763.mp3" preload="auto"></audio>
-    <audio id="correct-sound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_c3b04c7c6a.mp3" preload="auto"></audio>
-    <audio id="wrong-sound" src="https://cdn.pixabay.com/audio/2022/03/14/audio_90c10b7f6c.mp3" preload="auto"></audio>
-    <audio id="bg-music" src="https://cdn.pixabay.com/audio/2022/10/26/audio_a7a2a85a32.mp3" loop preload="auto"></audio>
+    
+    <!-- Audio Player (Hidden) --><audio id="tts-audio-player"></audio>
 
     <script>
-        // --- ✨ PASTE YOUR API KEY HERE ✨ ---
-        const apiKey = "AIzaSyA41Znf1GTroZTXTe3UqyyqARNzMSgjQzg"; // <-- PASTE YOUR SECRET API KEY BETWEEN THE QUOTES
-        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        // --- 1. API Configuration ---
+        const API_KEY = "AIzaSyA41Znf1GTroZTXTe3UqyyqARNzMSgjQzg"; // Use "" for API-key-less access
+        const API_URL_GENERATE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+        const API_URL_TTS = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
 
-        // --- Screen Elements ---
-        const grandTitleScreen = document.getElementById('grand-title-screen');
-        const warningScreen = document.getElementById('warning-screen');
-        const gatekeeperScreen = document.getElementById('gatekeeper-screen');
-        const successScreen = document.getElementById('success-screen');
-        const consolationScreen = document.getElementById('consolation-screen');
-        // REMOVED: const gameScreen = document.getElementById('game-screen');
-
-        const quoteLoadingBox = document.getElementById('quote-loading-box');
-        const quoteContentBox = document.getElementById('quote-content-box');
-        const quoteTextDisplay = document.getElementById('quote-text-display');
-
-        const errorMessage = document.getElementById('error-message');
-        const avatarImage = document.getElementById('avatar-image');
-        const riddleLoadingBox = document.getElementById('riddle-loading-box');
-        const riddleContentBox = document.getElementById('riddle-content-box');
-        const riddleText = document.getElementById('riddle-text');
+        // --- 2. DOM Selectors ---
+        const pageSplash = document.getElementById('page-splash');
+        const pageInput = document.getElementById('page-input');
+        const pageWelcome = document.getElementById('page-welcome');
+        
+        const splashHypeText = document.getElementById('splash-hype-text');
+        const splashBtn = document.getElementById('splash-btn');
+        
+        const inputHypeText = document.getElementById('input-hype-text');
         const guestNameInput = document.getElementById('guest-name');
-        const riddleAnswerInput = document.getElementById('riddle-answer');
         const guestRelationInput = document.getElementById('guest-relation');
-        const gatekeeperButton = document.getElementById('gatekeeper-button');
+        const inputBtn = document.getElementById('input-btn');
+        const errorMessage = document.getElementById('error-message');
+        
+        const welcomeTitle = document.getElementById('welcome-title');
+        const welcomeSubtitle = document.getElementById('welcome-subtitle');
+        const dressCodeBtn = document.getElementById('dress-code-btn');
+        const generatedBdayMessage = document.getElementById('generated-bday-message');
+        
+        const giftIdeaBtn = document.getElementById('gift-idea-btn');
+        
+        const loader = document.getElementById('loader');
+        const audioPlayer = document.getElementById('tts-audio-player');
 
-        const successGuestName = document.getElementById('success-guest-name');
-        const consolationGuestName = document.getElementById('consolation-guest-name');
-        const correctRiddleAnswerSpan = document.getElementById('correct-riddle-answer');
+        // NEW: Fireworks container
+        const fireworksContainer = document.getElementById('fireworks-container');
+        
+        // --- 3. Mock Guest List ---
+        // (No actual list, just checking for empty fields)
+        
+        // --- 4. Core Gemini API Call (Text) ---
+        async function callGemini(prompt) {
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: {
+                    parts: [{ text: "You are an AI assistant for Alina's 11th Birthday. Your tone is magical, exciting, and celebratory." }]
+                },
+            };
 
-        // --- REMOVED: Guess The Word Game Elements ---
+            const response = await fetch(API_URL_GENERATE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        // --- Audio Elements ---
-        const swooshSound = document.getElementById('swoosh-sound');
-        const correctSound = document.getElementById('correct-sound');
-        const wrongSound = document.getElementById('wrong-sound');
-        const bgMusic = document.getElementById('bg-music');
+            if (!response.ok) {
+                throw new Error(`API call failed with status: ${response.status}`);
+            }
 
-        const avatarProfiles = [
-             { persona: 'A glamorous skeleton who loves glitter and rock music.', src: 'https://i.ibb.co/tpTnfCpd/unnamed.jpg' },
-             { persona: 'A futuristic alien princess who is obsessed with Earth candy.', src: 'https://i.ibb.co/WWYqY29C/unnamed-3.jpg' },
-             { persona: 'A classic, bubbly witch who loves to brew potions that smell like bubblegum.', src: 'https://i.ibb.co/GvdNZy6B/unnamed-1.jpg' },
-             { persona: 'A slightly mad scientist who is very proud of her bubbling, glowing experiments.', src: 'https://i.ibb.co/R42GNSdx/avatars-7.jpg' },
-             { persona: 'A high-energy ghost cheerleader with a spectral pom-pom.', src: 'https://i.ibb.co/7tCTkSMq/unnamed-6.jpg' },
-             { persona: 'A cool werewolf rocker with a guitar made of bones.', src: 'https://i.ibb.co/d03MTvWv/unnamed-7.jpg' },
-             { persona: 'A second classic, bubbly witch who also loves to brew potions.', src: 'https://i.ibb.co/GvdNZy6B/unnamed-1.jpg' },
-             { persona: 'A very sleepy, moody vampire who is doing this as a favor to Alina.', src: 'https://i.ibb.co/QFHZnXDj/unnamed-2.jpg' }
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+            
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                return candidate.content.parts[0].text.trim();
+            } else {
+                console.error("Invalid API response structure:", result);
+                throw new Error("Failed to get valid text from API.");
+            }
+        }
+        
+        /**
+         * The core Gemini TTS API call function
+         */
+        async function callGeminiTTS(textToSpeak) {
+            const payload = {
+                contents: [{
+                    parts: [{ text: textToSpeak }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: "Leda" } 
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            const response = await fetch(API_URL_TTS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`TTS API call failed with status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            const part = result?.candidates?.[0]?.content?.parts?.[0];
+            const audioData = part?.inlineData?.data;
+            const mimeType = part?.inlineData?.mimeType;
+
+            if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                const rateMatch = mimeType.match(/rate=(\d+)/);
+                const sampleRate = rateMatch && rateMatch[1] ? parseInt(rateMatch[1], 10) : 24000;
+                
+                const pcmData = base64ToArrayBuffer(audioData);
+                const pcm16 = new Int16Array(pcmData);
+                const wavBlob = pcmToWav(pcm16, sampleRate);
+                return URL.createObjectURL(wavBlob);
+            } else {
+                console.error("Invalid TTS response structure:", result);
+                throw new Error("Invalid TTS audio data received.");
+            }
+        }
+        
+        /**
+         * Converts Base64 string to ArrayBuffer.
+         */
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        /**
+         * --- RE-INSERTED MISSING FUNCTION ---
+         * Converts raw PCM16 data to a WAV file Blob.
+         */
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1;
+            const bytesPerSample = 2; // 16-bit
+            const blockAlign = numChannels * bytesPerSample;
+            const byteRate = sampleRate * blockAlign;
+            const dataSize = pcmData.length * bytesPerSample;
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            // RIFF header
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeString(view, 8, 'WAVE');
+            // 'fmt ' sub-chunk
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true); // Sub-chunk size
+            view.setUint16(20, 1, true); // Audio format (1 = PCM)
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, 16, true); // Bits per sample
+            // 'data' sub-chunk
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            // Write PCM data
+            for (let i = 0; i < pcmData.length; i++) {
+                view.setInt16(44 + i * 2, pcmData[i], true);
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        /**
+         * --- RE-INSERTED MISSING FUNCTION ---
+         * Helper to write a string to a DataView.
+         */
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        /**
+         * --- RE-INSERTED MISSING FUNCTION ---
+         * Shows the specified page
+         */
+        function showPage(pageId) {
+            const pages = [pageSplash, pageInput, pageWelcome];
+            let activePageIndex = -1;
+            
+            for (let i = 0; i < pages.length; i++) {
+                if (pages[i].id === pageId) {
+                    activePageIndex = i;
+                    break;
+                }
+            }
+
+            pages.forEach((page, index) => {
+                if (index === activePageIndex) {
+                    page.classList.remove('left');
+                    page.classList.add('active');
+                } else if (index < activePageIndex) {
+                    page.classList.remove('active');
+                    page.classList.add('left');
+                } else {
+                    page.classList.remove('active', 'left');
+                }
+            });
+        }
+
+        /** --- RE-INSERTED MISSING FUNCTIONS --- */
+        function showLoader() { loader.classList.add('visible'); }
+        function hideLoader() { loader.classList.remove('visible'); }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('visible');
+        }
+        
+        function hideError() {
+            errorMessage.classList.remove('visible');
+        }
+
+        // --- 6. AI Generation Functions ---
+
+        /** --- RE-INSERTED MISSING FUNCTION --- */
+        async function generateSplashHype() {
+            const prompt = "Generate a new, unique, bold, and dramatic 1-2 sentence message to build maximum hype for a legendary, exclusive event. DO NOT reveal what the event is or who it is for. Make it sound unforgettable, high-stakes, and incredibly exciting. Example: 'The most anticipated night of the year has arrived...' or 'What lies beyond is beyond imagination... Are you ready?'";
+            try {
+                const hypeText = await callGemini(prompt);
+                splashHypeText.textContent = hypeText;
+            } catch (error) {
+                console.error("Splash hype failed:", error);
+                splashHypeText.textContent = "An unforgettable night awaits...";
+            }
+        }
+        
+        /** --- RE-INSERTED MISSING FUNCTION --- */
+        async function generateInputHype() {
+            const prompt = "Generate a new, unique, and extremely bold 1-2 sentence message for someone who has just passed the first 'door' of an exclusive event. DO NOT reveal the event. Make it sound like a high-stakes VIP check. Focus on them 'unlocking' the next stage. Make it dramatic and mysterious. Example: 'Access granted... for now. Your identity must be verified for the main event.' or 'You''re in. But the inner circle awaits... Who are you?'";
+            try {
+                const hypeText = await callGemini(prompt);
+                inputHypeText.textContent = hypeText;
+            } catch (error) { 
+                console.error("Input hype failed:", error);
+                inputHypeText.textContent = "Access to the next stage is granted. Please verify your identity.";
+            } 
+        }
+
+        /**
+         * --- REVISED: Renamed from generateWelcome ---
+         * This function ONLY generates the text and puts it on the page.
+         */
+        async function generateWelcomeText(name, relation) {
+            // REVISED PROMPT for longer message
+            const prompt = `Generate a new, unique, and very exciting welcome for a guest at Alina's 11th birthday party. The guest's name is ${name} and their relation is ${relation}.
+            
+            You must generate TWO things, separated by a pipe character "|":
+            1.  A short, exciting welcome title (e.g., "You're In, ${name}!", "Welcome to the Gala, ${name}!", "It's really you, ${name}!")
+            2.  A longer, heartfelt confirmation message (3-5 sentences). This message MUST mention their relation (e.g., "Alina's favorite ${relation}") AND express how important their presence is to Alina. Elaborate on the magical atmosphere, how thrilled Alina is, and hint at the unforgettable celebration ahead.
+            
+            Example format: Welcome, ${name}!|Alina's favorite ${relation} has arrived! The stars have aligned for this magical evening, and Alina couldn't be more thrilled to have you here. Your presence makes this Starlight Gala truly complete, and we're all set for an unforgettable night of celebration and wonder!
+            
+            Make it fun, personal, and different every time.`;
+
+            try {
+                const result = await callGemini(prompt);
+                const parts = result.split('|');
+                
+                const title = parts[0] ? parts[0].trim() : `Welcome, ${name}!`;
+                const subtitle = parts[1] ? parts[1].trim() : `Alina's favorite ${relation} is confirmed! She's so happy you're here to celebrate this magical evening with her.`;
+
+                welcomeTitle.textContent = title;
+                welcomeSubtitle.textContent = subtitle;
+                
+                // await generateAndPlayAudio(); // <-- THIS WAS THE ERROR, NOW REMOVED
+
+            } catch (error) {
+                console.error("Failed to generate welcome text:", error);
+                welcomeTitle.textContent = `Welcome, ${name}!`;
+                welcomeSubtitle.textContent = `Alina's favorite ${relation} is confirmed! She's so happy you're here.`;
+                // Re-throw the error so it can be caught by the button
+                throw error;
+            }
+        }
+        
+        async function generateDressCodeInfo() {
+            generatedBdayMessage.innerHTML = 'Checking the stars...'; 
+            const prompt = "Generate a new, unique, and fun 2-3 sentence description for a party dress code called 'Starlight Chic'. Make it sound magical, elegant, and fun for an 11-year-old's birthday gala. Mention sparkles, deep blues, purples, or silvers. Example: 'Think of the night sky! Wear your most magical, sparkling outfits. Deep blues, purples, and shimmering silvers are perfect. It's all about shining bright like a star!'";
+            try {
+                const info = await callGemini(prompt);
+                generatedBdayMessage.innerHTML = info.replace(/\n/g, '<br>'); 
+            } catch (error) {
+                console.error("Failed to generate dress code:", error);
+                generatedBdayMessage.innerHTML = "Wear something magical that sparkles! Think deep blues, purples, and silvers.";
+            }
+        }
+        
+        async function generateGiftIdeas() {
+            generatedBdayMessage.innerHTML = 'Thinking of the perfect gift...'; 
+            const prompt = "Generate 3-4 new, unique, and fun gift ideas for an 11-year-old girl's birthday. Her party theme is a 'Starlight Gala' (magical, starry, chic). She loves things that are creative, fun, and a bit magical. List the ideas clearly, maybe with emojis. Example: '✨ Star Projector: To turn her room into a galaxy!'";
+            try {
+                const info = await callGemini(prompt);
+                generatedBdayMessage.innerHTML = info.replace(/\n/g, '<br>'); 
+            } catch (error) {
+                console.error("Failed to generate gift ideas:", error);
+                generatedBdayMessage.innerHTML = "How about a cool galaxy projector, a DIY jewelry-making kit, or a fun board game?";
+            }
+        }
+        
+        async function generateAndPlayAudio() {
+            const textToRead = `
+                Say with excitement and warmth: ${welcomeTitle.textContent}!
+                ${welcomeSubtitle.textContent}.
+            `;
+            
+            let audioUrl;
+            try {
+                audioUrl = await callGeminiTTS(textToRead);
+            } catch (error) {
+                console.error("TTS Generation Failed:", error);
+                return; 
+            }
+
+            if (!audioUrl) {
+                console.error("No audio URL returned from TTS.");
+                return;
+            }
+            
+            audioPlayer.src = audioUrl;
+            
+            return new Promise((resolve) => { 
+                audioPlayer.onended = () => {
+                    URL.revokeObjectURL(audioUrl); 
+                    resolve();
+                };
+                audioPlayer.onerror = (e) => {
+                    URL.revokeObjectURL(audioUrl); 
+                    console.error("Audio playback failed.", e);
+                    resolve(); 
+                };
+                audioPlayer.play().catch(error => {
+                    console.warn("Audio autoplay was blocked by the browser. This is expected behavior.");
+                    resolve(); 
+                });
+            });
+        }
+
+        // --- NEW: Firework Generation Logic ---
+        const fireworkColors = [
+            'var(--firework-color-1)', 
+            'var(--firework-color-2)', 
+            'var(--firework-color-3)', 
+            'var(--firework-color-4)'
         ];
 
-        let currentAvatarRiddleIndex = Math.floor(Math.random() * avatarProfiles.length);
-        let currentGeneratedRiddle = { riddle: "", answer: "" };
-        let welcomeMessageLoading = false;
-        let giftIdeasLoading = false;
-        let poemLoading = false;
-        let wishLoading = false;
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.classList.add('firework');
+            fireworksContainer.appendChild(firework);
 
-        let globalGuestName = "";
-        let globalGuestRelation = "";
+            const startX = Math.random() * 100 + 'vw';
+            const startY = '100vh'; // Always start from bottom
+            const launchPeakY = (Math.random() * 60 + 10) + 'vh'; // Between 10% and 70% from top
+            const burstDelay = (Math.random() * 1.5) + 0.5 + 's'; // Burst 0.5 to 2 seconds after launch
+            const animationDuration = (Math.random() * 3) + 4 + 's'; // 4 to 7 seconds per cycle
+            const fireworkSize = (Math.random() * 50 + 30) + 'px'; // 30px to 80px for burst
 
-        // --- REMOVED: Guess The Word Game State ---
-        let lastScreenBeforeGame = 'success'; // Kept variable, but game functions removed
+            const colorIndex = Math.floor(Math.random() * fireworkColors.length);
+            const chosenColor = fireworkColors[colorIndex];
 
-        // --- Gemini API Helper Functions ---
-        function exponentialBackoff(fn, retries = 3, delay = 1000) {
-            return new Promise((resolve, reject) => {
-                async function retry() {
-                    try { const res = await fn(); resolve(res); }
-                    catch (err) {
-                        if (retries > 0) { setTimeout(retry, delay); retries--; delay *= 2; }
-                        else { reject(err); }
-                    }
-                }
-                retry();
+            firework.style.setProperty('--start-x', startX);
+            firework.style.setProperty('--start-y', startY);
+            firework.style.setProperty('--launch-peak-y', launchPeakY);
+            firework.style.setProperty('--burst-delay', burstDelay);
+            firework.style.setProperty('--firework-size', fireworkSize);
+            firework.style.setProperty('--firework-color', chosenColor);
+            firework.style.animationDuration = animationDuration;
+            firework.style.animationDelay = (Math.random() * -animationDuration.replace('s', '')) + 's'; // Random initial offset
+
+            firework.addEventListener('animationend', () => {
+                // Relaunch the firework from a new random position
+                const newStartX = Math.random() * 100 + 'vw';
+                const newLaunchPeakY = (Math.random() * 60 + 10) + 'vh';
+                const newBurstDelay = (Math.random() * 1.5) + 0.5 + 's';
+                const newFireworkSize = (Math.random() * 50 + 30) + 'px';
+
+                firework.style.setProperty('--start-x', newStartX);
+                firework.style.setProperty('--launch-peak-y', newLaunchPeakY);
+                firework.style.setProperty('--burst-delay', newBurstDelay);
+                firework.style.setProperty('--firework-size', newFireworkSize);
+                firework.style.animation = 'none'; // Reset animation
+                void firework.offsetWidth; // Trigger reflow
+                firework.style.animation = `firework-launch ${animationDuration} infinite`; // Restart animation
             });
         }
 
-        async function callGemini(prompt, isJsonResponse = false) {
-             if (apiKey === "" || apiKey.includes("PASTE") || apiKey.includes("YOUR")) {
-                console.error("API Key is missing or is a placeholder!");
-                showApiError("API Key is missing. Cannot use AI features.");
-                throw new Error("API Key is missing or invalid.");
-             }
-
-             const payload = { contents: [{ parts: [{ text: prompt }] }] };
-             if (isJsonResponse) {
-                 payload.generationConfig = { responseMimeType: "application/json" };
-             }
-
-             const apiCall = () => fetch(GEMINI_API_URL, {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify(payload)
-             });
-
-             try {
-                 const response = await exponentialBackoff(apiCall);
-                 if (!response.ok) {
-                    const errorBody = await response.text();
-                    console.error("Google API Error:", response.status, errorBody);
-                    let userMessage = `API Error (${response.status}).`;
-                    if (response.status === 400) userMessage += " Check API Key/Request.";
-                    if (response.status === 429) userMessage += " Rate limit exceeded.";
-                    showApiError(userMessage);
-                    throw new Error(`API Error: ${response.status}. Details: ${errorBody}`);
-                 }
-                 const result = await response.json();
-
-                 if (!result.candidates || !result.candidates[0]?.content?.parts[0]?.text) {
-                     if (result.promptFeedback?.blockReason) {
-                         console.error("Gemini call blocked:", result.promptFeedback.blockReason);
-                         showApiError(`API call blocked: ${result.promptFeedback.blockReason}`);
-                         throw new Error(`API call blocked due to: ${result.promptFeedback.blockReason}`);
-                     }
-                     console.error("Invalid response structure:", JSON.stringify(result, null, 2));
-                     showApiError("Invalid response from API.");
-                     throw new Error("Invalid response structure from Gemini API");
-                 }
-
-                 return result.candidates[0].content.parts[0].text;
-             } catch (error) {
-                 if (!error.message.startsWith("API call blocked") && !error.message.startsWith("API Error")) {
-                    showApiError("Network error or API unavailable.");
-                 }
-                 throw error;
-             }
-        }
-
-        function showApiError(message) {
-            if (errorMessage && gatekeeperScreen && !gatekeeperScreen.classList.contains('hidden')) {
-                errorMessage.textContent = `⚠️ ${message}`;
-                errorMessage.classList.remove('hidden');
-            }
-             const giftBoxSuccess = document.getElementById('success-gift-box');
-             if (giftBoxSuccess && !giftBoxSuccess.classList.contains('hidden') && giftIdeasLoading) {
-                 giftBoxSuccess.innerHTML = `<p class="text-red-500 pro-font">⚠️ ${message}</p>`;
-             }
-             const poemBoxSuccess = document.getElementById('success-poem-box');
-             if (poemBoxSuccess && !poemBoxSuccess.classList.contains('hidden') && poemLoading) {
-                 poemBoxSuccess.innerHTML = `<p class="text-red-500 pro-font">⚠️ ${message}</p>`;
-             }
-             const wishBoxSuccess = document.getElementById('success-wish-box');
-             if (wishBoxSuccess && !wishBoxSuccess.classList.contains('hidden') && wishLoading) {
-                 wishBoxSuccess.innerHTML = `<p class="text-red-500 pro-font">⚠️ ${message}</p>`;
-             }
-             const giftBoxCons = document.getElementById('consolation-gift-box');
-              if (giftBoxCons && !giftBoxCons.classList.contains('hidden') && giftIdeasLoading) {
-                 giftBoxCons.innerHTML = `<p class="text-red-500 pro-font">⚠️ ${message}</p>`;
-             }
-             const poemBoxCons = document.getElementById('consolation-poem-box');
-             if (poemBoxCons && !poemBoxCons.classList.contains('hidden') && poemLoading) {
-                 poemBoxCons.innerHTML = `<p class="text-red-500 pro-font">⚠️ ${message}</p>`;
-             }
-             const wishBoxCons = document.getElementById('consolation-wish-box');
-              if (wishBoxCons && !wishBoxCons.classList.contains('hidden') && wishLoading) {
-                 wishBoxCons.innerHTML = `<p class="text-red-500 pro-font">⚠️ ${message}</p>`;
-             }
-             console.error("API Error Displayed:", message);
-        }
-
-
-        async function generateSpookyQuote() {
-            quoteLoadingBox.classList.remove('hidden');
-            quoteContentBox.classList.add('hidden');
-            const prompt = `You are a spooky spirit. Generate one single, classic-style, spooky Halloween quote. It should be one sentence long. Return ONLY the quote as a single string.`;
-            try {
-                let text = await callGemini(prompt);
-                quoteTextDisplay.textContent = text.replace(/\"/g, '');
-            } catch (error) {
-                quoteTextDisplay.textContent = `"When witches go riding..."`;
-            } finally {
-                quoteLoadingBox.classList.add('hidden');
-                quoteContentBox.classList.remove('hidden');
+        function initFireworks(count) {
+            for (let i = 0; i < count; i++) {
+                createFirework();
             }
         }
 
-        async function generateDynamicRiddle(persona) {
-            gatekeeperButton.disabled = true;
-            riddleLoadingBox.classList.remove('hidden');
-            riddleContentBox.classList.add('hidden');
-            const prompt = `Create a classic, one-sentence riddle and its simple, one or two-word answer, spoken by a character with persona: "${persona}". Return ONLY a JSON object: {"riddle": "Your riddle", "answer": "Your answer"}`;
-            try {
-                const jsonText = await callGemini(prompt, true);
-                const parsed = JSON.parse(jsonText);
-                currentGeneratedRiddle = { riddle: parsed.riddle, answer: parsed.answer.toLowerCase().trim() };
-                riddleText.textContent = `"${currentGeneratedRiddle.riddle}"`;
-            } catch (error) {
-                currentGeneratedRiddle = { riddle: "I have cities, but no houses...?", answer: "a map" };
-                riddleText.textContent = `"${currentGeneratedRiddle.riddle}"`;
-            } finally {
-                gatekeeperButton.disabled = false;
-                riddleLoadingBox.classList.add('hidden');
-                riddleContentBox.classList.remove('hidden');
-            }
-        }
-
-        async function getGiftIdeas(targetBoxId) {
-             if (giftIdeasLoading) return; giftIdeasLoading = true;
-             const targetBox = document.getElementById(targetBoxId);
-             targetBox.classList.remove('hidden');
-             targetBox.innerHTML = '<div class="spinner mx-auto"></div><p class="pro-font">Brewing ideas...</p>';
-             const prompt = `Suggest 4-5 fun birthday gift ideas for girls 11-15, easy to find (bookstores, toy stores, markets). Start with 'Here are a few great ideas...' Use bullet points.`;
-             try {
-                 let text = await callGemini(prompt);
-                 text = text.replace(/\n/g, '<br>').replace(/\* /g, '<br>• ');
-                 targetBox.innerHTML = text;
-             } catch (error) {
-                 targetBox.innerHTML = "<p class='text-red-400 pro-font'>The spirits are stumped!</p>";
-             } finally {
-                 giftIdeasLoading = false;
-                 const button = document.getElementById(targetBoxId.replace('-box', '-btn'));
-                 if (button) button.classList.add('hidden');
-             }
-        }
-
-        async function generateWelcomeMessage(guestName, guestRelation, targetElement) {
-            if (!targetElement) {
-                console.error("Target element for welcome message is missing!");
-                return;
-            }
-            welcomeMessageLoading = true;
-            targetElement.textContent = `Conjuring a welcome for ${guestName}...`;
-            const prompt = `You are a spooky gatekeeper for Alina's 11th Halloween birthday. Guest: "${guestName}" (${guestRelation}). Write a short, single-sentence, spooky but fun welcome. No exclamation points.`;
-            try {
-                let text = await callGemini(prompt);
-                targetElement.textContent = text.replace(/\"/g, '');
-            } catch (error) {
-                targetElement.textContent = `Welcome, ${guestName}!`;
-            } finally {
-                welcomeMessageLoading = false;
-            }
-        }
-
-
-        async function getBirthdayPoem(targetBoxId) {
-            if (poemLoading) return; poemLoading = true;
-            const targetBox = document.getElementById(targetBoxId);
-             if (!targetBox) { console.error("Target box for poem missing:", targetBoxId); poemLoading = false; return; }
-            targetBox.classList.remove('hidden');
-            targetBox.innerHTML = '<div class="spinner mx-auto"></div><p class="pro-font">Writing a verse...</p>';
-            const prompt = `You are a fun, spooky poet. Guest: "${globalGuestName}" (Alina's "${globalGuestRelation}"). Write a short, 4-line birthday poem for Alina (11th birthday on Halloween). Celebratory, spooky, fun. Start with 'Here is a special verse for Alina from ${globalGuestName}...'`;
-            try {
-                let text = await callGemini(prompt);
-                text = text.replace(/\n/g, '<br>');
-                targetBox.innerHTML = text;
-            } catch (error) {
-                 targetBox.innerHTML = "<p class='text-red-400 pro-font'>The poet's ghost got shy!</p>";
-            } finally {
-                poemLoading = false;
-                 const button = document.getElementById(targetBoxId.replace('-box', '-btn'));
-                 if (button) button.classList.add('hidden');
-            }
-        }
-
-        async function getBirthdayWish(targetBoxId) {
-            if (wishLoading) return; wishLoading = true;
-            const targetBox = document.getElementById(targetBoxId);
-            if (!targetBox) { console.error("Target box for wish missing:", targetBoxId); wishLoading = false; return; }
-            targetBox.classList.remove('hidden');
-            targetBox.innerHTML = '<div class="spinner mx-auto"></div><p class="pro-font">Conjuring a wish...</p>';
-            const prompt = `You are a fun, spooky character. Guest: "${globalGuestName}" (Alina's "${globalGuestRelation}"). Write a unique, 2-3 sentence birthday wish for Alina (11th birthday on Halloween). Celebratory, spooky, fun. Start with 'A spooky birthday wish flies your way from ${globalGuestName}...'`;
-            try {
-                let text = await callGemini(prompt);
-                text = text.replace(/\n/g, '<br>');
-                targetBox.innerHTML = text;
-            } catch (error) {
-                 targetBox.innerHTML = "<p class='text-red-400 pro-font'>The wish-granting ghoul is busy!</p>";
-            } finally {
-                wishLoading = false;
-                 const button = document.getElementById(targetBoxId.replace('-box', '-btn'));
-                 if (button) button.classList.add('hidden');
-            }
-        }
-
-        // --- REMOVED: Guess The Word Game Functions ---
-
-        // --- REMOVED startGame function ---
-
-        // --- REMOVED returnToInvitation function ---
-
-        function playSound(audioElement) {
-             try {
-                 if (audioElement && typeof audioElement.play === 'function') {
-                     audioElement.play().catch(e => console.warn("Audio play error:", e));
-                 }
-             } catch (e) {
-                 console.warn("Could not play sound:", e);
-             }
-        }
-
-
-        function showScreen(screenToShow) {
-            // REMOVED gameScreen from this list
-            [grandTitleScreen, warningScreen, gatekeeperScreen, successScreen, consolationScreen].forEach(screen => {
-                if (!screen) { console.warn("A screen element is missing!"); return; }
-                if (screen === screenToShow) {
-                    screen.classList.remove('hidden');
-                } else {
-                    screen.classList.add('hidden');
-                }
-            });
-        }
-
-        function showWarningScreen() {
-            playSound(swooshSound);
-            showScreen(warningScreen);
-            generateSpookyQuote();
-        }
-
-        function showRiddleScreen() {
-            playSound(swooshSound);
-            showScreen(gatekeeperScreen);
-
-            currentAvatarRiddleIndex = Math.floor(Math.random() * avatarProfiles.length);
-            const selectedProfile = avatarProfiles[currentAvatarRiddleIndex];
-            avatarImage.src = selectedProfile.src;
-
-            guestNameInput.value = '';
-            riddleAnswerInput.value = '';
-            guestRelationInput.value = '';
-            errorMessage.classList.add('hidden');
-
-            generateDynamicRiddle(selectedProfile.persona);
-        }
-
-        async function checkRiddleAndDetails() {
-            const guestName = guestNameInput.value.trim();
-            const guestRiddleAnswer = riddleAnswerInput.value.toLowerCase().trim();
-            const guestRelation = guestRelationInput.value.trim();
-            const correctRiddleAnswer = currentGeneratedRiddle.answer;
-
-            errorMessage.classList.add('hidden');
-
-            if (guestName === '') {
-                errorMessage.textContent = "The spirits demand to know your name!";
-                errorMessage.classList.remove('hidden');
-                playSound(wrongSound);
-                return;
-            }
-
-            if (guestRelation === '') {
-                errorMessage.textContent = "State your connection to Alina, or be forever lost!";
-                errorMessage.classList.remove('hidden');
-                playSound(wrongSound);
-                return;
-            }
-
-            globalGuestName = guestName;
-            globalGuestRelation = guestRelation;
-
-            let targetScreen;
-            let targetWelcomeElement;
-
-            if (guestRiddleAnswer === correctRiddleAnswer) {
-                playSound(correctSound);
-                targetScreen = successScreen;
-                targetWelcomeElement = successGuestName;
-            } else {
-                playSound(wrongSound);
-                targetScreen = consolationScreen;
-                targetWelcomeElement = consolationGuestName;
-                if (correctRiddleAnswerSpan) {
-                     correctRiddleAnswerSpan.textContent = `"${correctRiddleAnswer}"`;
-                } else {
-                    console.error("correctRiddleAnswerSpan element not found!");
-                }
-            }
-
-            // Make buttons visible again on the target screen
-            if (targetScreen === successScreen) {
-                // REMOVED game button ID
-                ['gift-idea-btn-success', 'poem-btn-success', 'wish-btn-success'].forEach(id => {
-                    const btn = document.getElementById(id); if (btn) btn.classList.remove('hidden');
-                });
-                ['success-gift-box', 'success-poem-box', 'success-wish-box'].forEach(id => {
-                    const box = document.getElementById(id); if (box) box.classList.add('hidden'); box.innerHTML = '';
-                });
-            } else if (targetScreen === consolationScreen) {
-                // REMOVED game button ID
-                 ['gift-idea-btn-consolation', 'poem-btn-consolation', 'wish-btn-consolation'].forEach(id => {
-                    const btn = document.getElementById(id); if (btn) btn.classList.remove('hidden');
-                });
-                 ['consolation-gift-box', 'consolation-poem-box', 'consolation-wish-box'].forEach(id => {
-                    const box = document.getElementById(id); if (box) box.classList.add('hidden'); box.innerHTML = '';
-                });
-            }
-
-            await generateWelcomeMessage(guestName, guestRelation, targetWelcomeElement);
-            showScreen(targetScreen);
-            playSound(bgMusic);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-             showScreen(grandTitleScreen);
+        // --- 7. Event Listeners ---
+        splashBtn.addEventListener('click', () => {
+            showPage('page-input');
+            generateInputHype();
         });
+        
+        /**
+         * --- THIS IS THE FINAL FIX ---
+         * Logic is changed to:
+         * 1. Generate text (await)
+         * 2. Switch page
+         * 3. Play audio (no await, no loader)
+         */
+        inputBtn.addEventListener('click', async () => {
+            hideError();
+            const name = guestNameInput.value.trim();
+            const relation = guestRelationInput.value.trim();
+            
+            if (!name || !relation) {
+                showError("Please fill out both fields to join the gala!");
+                return;
+            }
+            
+            // showLoader(); // <-- REMOVED per user request
+            
+            try {
+                // --- STEP 1: Wait ONLY for the text to be generated ---
+                await generateWelcomeText(name, relation);
+                
+                // --- STEP 2: Switch the page ---
+                showPage('page-welcome');
+                
+                // --- STEP 3: Play audio now that page is visible ---
+                // (No 'await' here, so it plays in the background)
+                generateAndPlayAudio();
+
+            } catch (error) {
+                // If text generation failed, show error
+                console.error("Error during input processing:", error);
+                showError("An error occurred. Please try again.");
+            } 
+            // 'finally' block with hideLoader() is no longer needed
+        });
+        
+        dressCodeBtn.addEventListener('click', () => {
+            generateDressCodeInfo();
+        });
+        
+        giftIdeaBtn.addEventListener('click', () => {
+            generateGiftIdeas();
+        });
+        
+        // --- 8. Initial Load ---
+        function init() {
+            generateSplashHype();
+            initFireworks(8); // Start 8 fireworks
+        }
+        
+        init();
 
     </script>
+
 </body>
 </html>
 
