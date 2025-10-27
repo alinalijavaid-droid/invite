@@ -329,7 +329,7 @@
         #page-input .logo-small img {
             width: 100%;
             height: auto;
-            border-radius: 50%; /* Make the placeholder circular */
+            /* border-radius: 50%; */ /* Make the placeholder circular */
         }
 
         #page-input h2 {
@@ -373,7 +373,7 @@
         #page-welcome .logo-small img {
             width: 100%;
             height: auto;
-            border-radius: 50%; /* Make the placeholder circular */
+            /* border-radius: 50%; */ /* Make the placeholder circular */
         }
 
         #page-welcome h1 {
@@ -428,6 +428,15 @@
             cursor: pointer;
             margin-left: 5px;
             font-weight: 700;
+        }
+
+        /* NEW: Styles for the TTS button container */
+        .action-buttons {
+            display: none; /* Hidden by default */
+            justify-content: center; /* Center the button */
+            width: 100%;
+            max-width: 320px;
+            margin-top: 15px; /* Add some space */
         }
 
         .message-box {
@@ -493,6 +502,30 @@
             transform: scale(1.05);
             box-shadow: 0 0 35px var(--color-accent-glow);
         }
+
+        /* NEW: Style for the TTS button */
+        .btn-tts {
+            background-color: var(--color-accent-secondary); /* Use the nice blue */
+            color: #121212;
+            font-size: 1rem;
+            flex-grow: 0; /* Don't let it stretch */
+            padding: 14px 25px; /* Comfy padding */
+            box-shadow: 0 0 20px rgba(0, 194, 255, 0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-tts:hover {
+             box-shadow: 0 0 30px rgba(0, 194, 255, 0.7);
+        }
+        
+        .btn-tts:disabled {
+            background-color: var(--color-text-dim);
+            color: #1E1E1E;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
 
         /* --- 11. Loader & Error (Unchanged) --- */
         #loader {
@@ -618,6 +651,11 @@
                 </div>
             </div>
             
+            <!-- NEW: Action Button container -->
+            <div class="action-buttons">
+                <button id="tts-btn" class="btn btn-tts" title="Read Aloud">🔊 Hear Your Invitation</button>
+            </div>
+
             <div class="message-box">
                 <div id="generated-bday-message">Click the helpers above for info!</div>
             </div>
@@ -632,7 +670,7 @@
 
     <script>
         // --- 1. API Configuration ---
-        const API_KEY = "AIzaSyA41Znf1GTroZTXTe3UqyyqARNzMSgjQzg"; // Use "" for API-key-less access
+        const API_KEY = "AIzaSyBAHLniI-uayTFaarcVVNzwnW6X_TVJNa0"; // Use "" for API-key-less access
         const API_URL_GENERATE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
         const API_URL_TTS = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
 
@@ -656,6 +694,7 @@
         const generatedBdayMessage = document.getElementById('generated-bday-message');
         
         const giftIdeaBtn = document.getElementById('gift-idea-btn');
+        const ttsBtn = document.getElementById('tts-btn'); // NEW
         
         const loader = document.getElementById('loader');
         const audioPlayer = document.getElementById('tts-audio-player');
@@ -663,8 +702,35 @@
         // NEW: Fireworks container
         const fireworksContainer = document.getElementById('fireworks-container');
         
-        // --- 3. Mock Guest List ---
-        // (No actual list, just checking for empty fields)
+        // --- 3. Helper: Fetch with Exponential Backoff ---
+        /**
+         * Fetches a resource with exponential backoff for 429 errors.
+         * @param {string} url The URL to fetch.
+         * @param {object} options The fetch options.
+         * @param {number} maxRetries Maximum number of retries.
+         * @returns {Promise<Response>} The fetch response.
+         */
+        async function fetchWithBackoff(url, options, maxRetries = 5) {
+            let delay = 1000; // start with 1 second
+            for (let i = 0; i < maxRetries; i++) {
+                const response = await fetch(url, options);
+
+                if (response.ok) {
+                    return response; // Success
+                }
+
+                if (response.status === 429) {
+                    // Don't log to console, just wait and retry
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; // Double the delay for the next retry
+                } else {
+                    // For other errors, throw immediately
+                    throw new Error(`API call failed with status: ${response.status}`);
+                }
+            }
+            // If all retries fail
+            throw new Error(`API call failed after ${maxRetries} retries (429 Rate Limit).`);
+        }
         
         // --- 4. Core Gemini API Call (Text) ---
         async function callGemini(prompt) {
@@ -674,14 +740,17 @@
                     parts: [{ text: "You are an AI assistant for Alina's 11th Birthday. Your tone is magical, exciting, and celebratory." }]
                 },
             };
-
-            const response = await fetch(API_URL_GENERATE, {
+            
+            const options = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
-            });
+            };
 
-            if (!response.ok) {
+            // Use fetchWithBackoff
+            const response = await fetchWithBackoff(API_URL_GENERATE, options);
+
+            if (!response.ok) { // This check is technically redundant due to fetchWithBackoff, but good practice
                 throw new Error(`API call failed with status: ${response.status}`);
             }
 
@@ -715,13 +784,16 @@
                 model: "gemini-2.5-flash-preview-tts"
             };
 
-            const response = await fetch(API_URL_TTS, {
+            const options = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
-            });
+            };
+            
+            // Use fetchWithBackoff
+            const response = await fetchWithBackoff(API_URL_TTS, options);
 
-            if (!response.ok) {
+            if (!response.ok) { // Redundant check
                 throw new Error(`TTS API call failed with status: ${response.status}`);
             }
 
@@ -850,7 +922,7 @@
 
         /** --- RE-INSERTED MISSING FUNCTION --- */
         async function generateSplashHype() {
-            const prompt = "Generate a new, unique, bold, and dramatic 1-2 sentence message to build maximum hype for a legendary, exclusive event. DO NOT reveal what the event is or who it is for. Make it sound unforgettable, high-stakes, and incredibly exciting. Example: 'The most anticipated night of the year has arrived...' or 'What lies beyond is beyond imagination... Are you ready?'";
+            const prompt = "Generate a new, unique, bold, and dramatic 1-2 sentence message to build maximum hype for a legendary, exclusive up coming event. DO NOT reveal what the event is or who it is for. Make it sound unforgettable, high-stakes, and incredibly exciting. Example: 'The most anticipated night of the year about to arrive...' or 'What lies beyond is beyond imagination... Are you ready?'";
             try {
                 const hypeText = await callGemini(prompt);
                 splashHypeText.textContent = hypeText;
@@ -862,7 +934,7 @@
         
         /** --- RE-INSERTED MISSING FUNCTION --- */
         async function generateInputHype() {
-            const prompt = "Generate a new, unique, and extremely bold 1-2 sentence message for someone who has just passed the first 'door' of an exclusive event. DO NOT reveal the event. Make it sound like a high-stakes VIP check. Focus on them 'unlocking' the next stage. Make it dramatic and mysterious. Example: 'Access granted... for now. Your identity must be verified for the main event.' or 'You''re in. But the inner circle awaits... Who are you?'";
+            const prompt = "Generate a new, unique, and extremely bold 1-2 sentence message for someone who has just invited for the  'celebration' of an exclusive event. DO NOT reveal the event. Make it sound like a high-stakes VIP check. Focus on them 'unlocking' the next stage. Make it dramatic and mysterious. Example: 'Access granted... for now. Your identity must be verified for the main event.' or 'You''re in. But the inner circle awaits... Who are you?'";
             try {
                 const hypeText = await callGemini(prompt);
                 inputHypeText.textContent = hypeText;
@@ -878,13 +950,13 @@
          */
         async function generateWelcomeText(name, relation) {
             // REVISED PROMPT for longer message
-            const prompt = `Generate a new, unique, and very exciting welcome for a guest at Alina's 11th birthday party. The guest's name is ${name} and their relation is ${relation}.
+            const prompt = `Generate a new, unique, and very exciting invitation for a guest for Alina's 11th birthday party. The guest's name is ${name} and their relation is ${relation}.
             
             You must generate TWO things, separated by a pipe character "|":
-            1.  A short, exciting welcome title (e.g., "You're In, ${name}!", "Welcome to the Gala, ${name}!", "It's really you, ${name}!")
-            2.  A longer, heartfelt confirmation message (3-5 sentences). This message MUST mention their relation (e.g., "Alina's favorite ${relation}") AND express how important their presence is to Alina. Elaborate on the magical atmosphere, how thrilled Alina is, and hint at the unforgettable celebration ahead.
+            1.  A short, exciting welcome title (e.g., "You're In, ${name}!", "Invited For the Gala, ${name}!", "It's really you, ${name}!")
+            2.  A longer, heartfelt confirmation message (3-5 sentences). This message MUST mention their relation (e.g., "Alina's favorite ${relation}") AND express how important their presence is to Alina. Elaborate on the magical atmosphere, how thrilled Alina will be , and hint at the unforgettable celebration ahead.
             
-            Example format: Welcome, ${name}!|Alina's favorite ${relation} has arrived! The stars have aligned for this magical evening, and Alina couldn't be more thrilled to have you here. Your presence makes this Starlight Gala truly complete, and we're all set for an unforgettable night of celebration and wonder!
+            Example format: Welcome, ${name}!|Alina's favorite ${relation} is Invited! The stars have aligned for this magical Event, and Alina couldn't be more thrilled to have you at her birthday. Your presence makes this Starlight Gala truly complete, so you Must come and we're all set for an unforgettable night of celebration and wonder!
             
             Make it fun, personal, and different every time.`;
 
@@ -893,7 +965,7 @@
                 const parts = result.split('|');
                 
                 const title = parts[0] ? parts[0].trim() : `Welcome, ${name}!`;
-                const subtitle = parts[1] ? parts[1].trim() : `Alina's favorite ${relation} is confirmed! She's so happy you're here to celebrate this magical evening with her.`;
+                const subtitle = parts[1] ? parts[1].trim() : `Alina's favorite ${relation} is confirmed! She is so excited to have you st the  celebration of the magical evening with her.`;
 
                 welcomeTitle.textContent = title;
                 welcomeSubtitle.textContent = subtitle;
@@ -903,7 +975,7 @@
             } catch (error) {
                 console.error("Failed to generate welcome text:", error);
                 welcomeTitle.textContent = `Welcome, ${name}!`;
-                welcomeSubtitle.textContent = `Alina's favorite ${relation} is confirmed! She's so happy you're here.`;
+                welcomeSubtitle.textContent = `Alina's favorite ${relation} is invited! She'will be happy with your Presence.`;
                 // Re-throw the error so it can be caught by the button
                 throw error;
             }
@@ -943,7 +1015,7 @@
             try {
                 audioUrl = await callGeminiTTS(textToRead);
             } catch (error) {
-                console.error("TTS Generation Failed:", error);
+                console.error("TTS Generation Failed:", error); // This is where the 429 error was logged
                 return; 
             }
 
@@ -1035,10 +1107,10 @@
         /**
          * --- THIS IS THE FINAL FIX ---
          * Logic is changed to:
-         * 1. Generate text (await)
-         * 2. Switch page
-         * 3. Play audio (no await, no loader)
-         */
+                 * 1. Generate text (await)
+                 * 2. Switch page
+                 * 3. Play audio (no await, no loader)
+                 */
         inputBtn.addEventListener('click', async () => {
             hideError();
             const name = guestNameInput.value.trim();
@@ -1058,9 +1130,8 @@
                 // --- STEP 2: Switch the page ---
                 showPage('page-welcome');
                 
-                // --- STEP 3: Play audio now that page is visible ---
-                // (No 'await' here, so it plays in the background)
-                generateAndPlayAudio();
+                // --- STEP 3: Show the TTS button ---
+                document.querySelector('.action-buttons').style.display = 'flex';
 
             } catch (error) {
                 // If text generation failed, show error
@@ -1078,6 +1149,25 @@
             generateGiftIdeas();
         });
         
+        // NEW: Event listener for the TTS button
+        ttsBtn.addEventListener('click', async () => {
+            ttsBtn.disabled = true;
+            ttsBtn.textContent = "Reading...";
+            generatedBdayMessage.innerHTML = "Warming up my voice..."; // Use the message box for status
+            
+            try {
+                // Call the existing function
+                await generateAndPlayAudio();
+                generatedBdayMessage.innerHTML = "Done! Click the helpers above for more info.";
+            } catch (error) {
+                console.error("TTS button click failed:", error);
+                generatedBdayMessage.innerHTML = "My voice is tired! Please try again.";
+            } finally {
+                ttsBtn.disabled = false;
+                ttsBtn.textContent = "🔊 Hear Again"; // Change text after first click
+            }
+        });
+
         // --- 8. Initial Load ---
         function init() {
             generateSplashHype();
